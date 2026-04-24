@@ -38,9 +38,33 @@
   .btn-main { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
   .btn-main:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,252,0.3); }
   .results { display: none; }
-  .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-  .preview-sub { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; }
+  .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 100px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+  @keyframes bounce-in {
+    0%   { transform: scale(0.4); opacity: 0; }
+    50%  { transform: scale(1.15); opacity: 1; }
+    70%  { transform: scale(0.95); }
+    85%  { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes bounce-out {
+    0%   { transform: scale(1); opacity: 1; }
+    30%  { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(0.4); opacity: 0; }
+  }
+
+  .preview-sub { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; animation: bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+  .preview-sub.bounce-out { animation: bounce-out 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards; }
+
+  .player-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+  .btn-play { padding: 8px 20px; background: rgba(124,92,252,0.15); border: 1px solid rgba(124,92,252,0.4); border-radius: 8px; color: #7c5cfc; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-play:hover { background: rgba(124,92,252,0.25); }
+  .progress-preview { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .progress-preview-fill { height: 100%; background: linear-gradient(90deg, #7c5cfc, #4f8bff); border-radius: 2px; width: 0%; transition: width 0.05s linear; }
+  .preview-timer { font-family: 'Space Mono', monospace; font-size: 11px; color: #555; min-width: 40px; text-align: right; }
+
   .sub-item { display: grid; grid-template-columns: 110px 1fr 80px; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; }
+  .sub-item.active-sub { background: rgba(124,92,252,0.08); border-radius: 6px; padding: 10px 6px; }
   .sub-time { font-family: 'Space Mono', monospace; font-size: 10px; color: #7c5cfc; line-height: 1.6; }
   .sub-text-edit { background: rgba(255,255,255,0.04); border: 1px solid transparent; border-radius: 6px; padding: 6px 8px; color: #f0f0f0; font-family: 'Outfit', sans-serif; font-size: 13px; outline: none; resize: none; width: 100%; }
   .sub-text-edit:focus { border-color: rgba(124,92,252,0.4); background: rgba(124,92,252,0.05); }
@@ -58,18 +82,13 @@
 </head>
 <body>
 <div class="app">
-  <div class="tag">100% Gratuit · Sans filigrane · Aucune API</div>
+  <div class="tag">100% Gratuit · Sans filigrane · Animation Bounce</div>
   <h1>Générateur de sous-titres</h1>
-  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Collez votre script · Export SRT</p>
+  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Animation bounce · Export SRT</p>
 
   <div class="card">
     <div class="card-title"><span class="step-number">1</span> Collez votre script</div>
-    <textarea id="scriptInput" rows="8" placeholder="Collez ici le texte de votre voix off, une phrase par ligne...
-
-Exemple :
-Vous avez pris le pire starter d'Écarlate et Violet
-Et vous le savez même pas
-On commence avec Flamigator..."></textarea>
+    <textarea id="scriptInput" rows="8" placeholder="Collez ici le texte de votre voix off, une phrase par ligne..."></textarea>
     <p class="hint">Mettez <span>une phrase par ligne</span> — chaque ligne deviendra un sous-titre.</p>
   </div>
 
@@ -77,7 +96,7 @@ On commence avec Flamigator..."></textarea>
     <div class="card-title"><span class="step-number">2</span> Durée de la vidéo</div>
     <div class="duration-row">
       <input type="number" id="videoDuration" value="40" min="1" max="600" />
-      <span class="duration-label">secondes — les timings seront répartis automatiquement</span>
+      <span class="duration-label">secondes — timings répartis automatiquement</span>
     </div>
     <p class="hint">Vous pourrez ajuster chaque timing manuellement ensuite.</p>
   </div>
@@ -108,13 +127,18 @@ On commence avec Flamigator..."></textarea>
 
   <div class="results" id="results">
     <div class="card">
-      <div class="card-title">Aperçu style</div>
+      <div class="card-title">Aperçu animé</div>
       <div class="preview-box">
         <div class="preview-sub" id="previewSub">APERÇU DU TEXTE</div>
       </div>
+      <div class="player-controls">
+        <button class="btn-play" id="btnPlay" onclick="togglePlay()">▶ Prévisualiser</button>
+        <div class="progress-preview"><div class="progress-preview-fill" id="progressFill"></div></div>
+        <div class="preview-timer" id="previewTimer">0s</div>
+      </div>
     </div>
     <div class="card">
-      <div class="card-title">Sous-titres · <span style="color:#7c5cfc;" id="subCount">0</span> segments · <span style="color:#555;font-size:10px;">cliquez pour modifier</span></div>
+      <div class="card-title">Sous-titres · <span style="color:#7c5cfc;" id="subCount">0</span> segments</div>
       <div class="list-header"><div>Timing</div><div>Texte</div><div>Durée(s)</div></div>
       <div class="subtitle-list" id="subtitleList"></div>
       <div class="btn-row">
@@ -127,64 +151,89 @@ On commence avec Flamigator..."></textarea>
 </div>
 
 <script>
-  let segments = [];
-  let selectedStyle = 'white';
+  let segments = [], selectedStyle = 'white', isPlaying = false;
+  let playInterval = null, currentTime = 0, totalDuration = 40;
 
   function selectStyle(el) {
     document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
     el.classList.add('active');
     selectedStyle = el.dataset.style;
-    if (segments.length > 0) updatePreview(segments[0].text);
+    if (segments.length > 0) updatePreview(segments[0].text, false);
   }
 
-  function updatePreview(text) {
-    const sub = document.getElementById('previewSub');
-    sub.textContent = text.toUpperCase();
+  function applyStyle(sub) {
     sub.style.cssText = "font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;line-height:1.2;text-transform:uppercase;";
-    if (selectedStyle === 'white') {
-      sub.style.color = '#fff';
-      sub.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000';
-    } else if (selectedStyle === 'yellow') {
-      sub.style.color = '#FFE500';
-      sub.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000';
-    } else if (selectedStyle === 'tiktok') {
-      sub.style.color = '#fff';
-      sub.style.background = '#000';
-      sub.style.padding = '4px 14px';
-      sub.style.borderRadius = '6px';
-    } else if (selectedStyle === 'neon') {
-      sub.style.color = '#00ff88';
-      sub.style.textShadow = '0 0 10px #00ff88,0 0 20px #00ff8855';
+    if (selectedStyle === 'white') { sub.style.color='#fff'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; }
+    else if (selectedStyle === 'yellow') { sub.style.color='#FFE500'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; }
+    else if (selectedStyle === 'tiktok') { sub.style.color='#fff'; sub.style.background='#000'; sub.style.padding='4px 14px'; sub.style.borderRadius='6px'; }
+    else if (selectedStyle === 'neon') { sub.style.color='#00ff88'; sub.style.textShadow='0 0 10px #00ff88,0 0 20px #00ff8855'; }
+  }
+
+  function updatePreview(text, animate = true) {
+    const sub = document.getElementById('previewSub');
+    if (animate) {
+      sub.classList.add('bounce-out');
+      setTimeout(() => {
+        sub.classList.remove('bounce-out');
+        sub.style.animation = 'none';
+        sub.textContent = text.toUpperCase();
+        applyStyle(sub);
+        void sub.offsetWidth;
+        sub.style.animation = 'bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
+      }, 180);
+    } else {
+      sub.textContent = text.toUpperCase();
+      applyStyle(sub);
+      sub.style.animation = 'bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
     }
   }
 
   function generate() {
     const raw = document.getElementById('scriptInput').value.trim();
-    const duration = parseFloat(document.getElementById('videoDuration').value) || 40;
+    totalDuration = parseFloat(document.getElementById('videoDuration').value) || 40;
     if (!raw) { alert('Veuillez coller votre script !'); return; }
-
     const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const timePerSeg = duration / lines.length;
-
-    segments = lines.map((text, i) => ({
-      text,
-      start: i * timePerSeg,
-      end: (i + 1) * timePerSeg,
-      duration: timePerSeg
-    }));
-
+    const timePerSeg = totalDuration / lines.length;
+    segments = lines.map((text, i) => ({ text, start: i * timePerSeg, end: (i+1)*timePerSeg, duration: timePerSeg }));
     document.getElementById('subCount').textContent = segments.length;
     renderList();
-    updatePreview(segments[0].text);
+    updatePreview(segments[0].text, false);
     document.getElementById('results').style.display = 'block';
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
   }
 
+  function togglePlay() {
+    isPlaying ? stopPlay() : startPlay();
+  }
+
+  function startPlay() {
+    isPlaying = true; currentTime = 0;
+    document.getElementById('btnPlay').textContent = '⏹ Arrêter';
+    let lastIdx = -1;
+    playInterval = setInterval(() => {
+      currentTime += 0.05;
+      document.getElementById('progressFill').style.width = Math.min((currentTime/totalDuration)*100, 100) + '%';
+      document.getElementById('previewTimer').textContent = currentTime.toFixed(1) + 's';
+      const idx = segments.findIndex(s => currentTime >= s.start && currentTime < s.end);
+      if (idx !== -1 && idx !== lastIdx) { updatePreview(segments[idx].text, true); highlightSeg(idx); lastIdx = idx; }
+      if (currentTime >= totalDuration) stopPlay();
+    }, 50);
+  }
+
+  function stopPlay() {
+    isPlaying = false; clearInterval(playInterval);
+    document.getElementById('btnPlay').textContent = '▶ Prévisualiser';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('previewTimer').textContent = '0s';
+    document.querySelectorAll('.sub-item').forEach(el => el.classList.remove('active-sub'));
+  }
+
+  function highlightSeg(i) {
+    document.querySelectorAll('.sub-item').forEach((el, j) => el.classList.toggle('active-sub', j===i));
+  }
+
   function formatTime(s) {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = Math.floor(s % 60);
-    const ms = Math.round((s % 1) * 1000);
+    const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=Math.floor(s%60), ms=Math.round((s%1)*1000);
     return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')},${String(ms).padStart(3,'0')}`;
   }
 
@@ -194,56 +243,37 @@ On commence avec Flamigator..."></textarea>
     segments.forEach((seg, i) => {
       const div = document.createElement('div');
       div.className = 'sub-item';
-      div.innerHTML = `
-        <div class="sub-time">${formatTime(seg.start)}<br>→ ${formatTime(seg.end)}</div>
-        <textarea class="sub-text-edit" rows="2" onfocus="updatePreview(this.value)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
-        <input class="sub-duration" type="number" value="${seg.duration.toFixed(1)}" min="0.5" step="0.5" onchange="updateDuration(${i}, this.value)" title="Durée en secondes" />
-      `;
+      div.innerHTML = `<div class="sub-time">${formatTime(seg.start)}<br>→ ${formatTime(seg.end)}</div>
+        <textarea class="sub-text-edit" rows="2" onfocus="updatePreview(this.value,true)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
+        <input class="sub-duration" type="number" value="${seg.duration.toFixed(1)}" min="0.5" step="0.5" onchange="updateDuration(${i},this.value)" />`;
       list.appendChild(div);
     });
   }
 
-  function updateDuration(index, val) {
-    segments[index].duration = parseFloat(val) || 2;
-    rebuildTimings();
-  }
+  function updateDuration(i, val) { segments[i].duration = parseFloat(val)||2; rebuildTimings(); }
 
   function rebuildTimings() {
-    let cursor = segments[0].start;
-    segments.forEach(seg => {
-      seg.start = cursor;
-      seg.end = cursor + seg.duration;
-      cursor = seg.end;
-    });
-    renderList();
+    let c = segments[0].start;
+    segments.forEach(s => { s.start=c; s.end=c+s.duration; c=s.end; });
+    totalDuration = c; renderList();
   }
 
   function exportSRT() {
     let srt = '';
-    segments.forEach((seg, i) => {
-      srt += `${i + 1}\n${formatTime(seg.start)} --> ${formatTime(seg.end)}\n${seg.text.trim().toUpperCase()}\n\n`;
-    });
-    downloadFile('sous-titres.srt', srt);
+    segments.forEach((s,i) => { srt += `${i+1}\n${formatTime(s.start)} --> ${formatTime(s.end)}\n${s.text.trim().toUpperCase()}\n\n`; });
+    dl('sous-titres.srt', srt);
   }
 
-  function exportTXT() {
-    const txt = segments.map(s => s.text.trim().toUpperCase()).join('\n');
-    downloadFile('sous-titres.txt', txt);
-  }
+  function exportTXT() { dl('sous-titres.txt', segments.map(s=>s.text.trim().toUpperCase()).join('\n')); }
 
-  function downloadFile(filename, content) {
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+  function dl(filename, content) {
     const a = document.createElement('a');
-    a.href = url;
+    a.href = URL.createObjectURL(new Blob([content], {type:'text/plain;charset=utf-8'}));
     a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     const msg = document.getElementById('successMsg');
     msg.style.display = 'block';
-    setTimeout(() => msg.style.display = 'none', 3000);
+    setTimeout(() => msg.style.display='none', 3000);
   }
 </script>
 </body>

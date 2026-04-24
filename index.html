@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur de sous-titres</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #0a0a0f;
+    color: #f0f0f0;
+    min-height: 100vh;
+    padding: 24px;
+    background-image: radial-gradient(ellipse at 20% 20%, rgba(99,60,180,0.12) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, rgba(30,120,255,0.08) 0%, transparent 60%);
+  }
+  h1 { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .app { max-width: 680px; margin: 0 auto; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7c5cfc; border: 1px solid rgba(124,92,252,0.4); padding: 2px 8px; border-radius: 20px; margin-bottom: 20px; }
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+  .card-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+  .step-number { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: rgba(124,92,252,0.2); color: #7c5cfc; font-size: 10px; font-weight: 700; }
+  textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; color: #f0f0f0; font-family: 'Outfit', sans-serif; font-size: 13px; outline: none; resize: vertical; line-height: 1.6; }
+  textarea:focus { border-color: rgba(124,92,252,0.5); }
+  .hint { font-size: 11px; color: #555; margin-top: 8px; line-height: 1.5; }
+  .hint span { color: #7c5cfc; }
+  .duration-row { display: flex; gap: 12px; align-items: center; }
+  .duration-row input[type="number"] { width: 80px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 12px; color: #f0f0f0; font-family: 'Space Mono', monospace; font-size: 13px; outline: none; text-align: center; }
+  .duration-label { font-size: 13px; color: #888; }
+  .style-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .style-option { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; cursor: pointer; transition: all 0.2s; }
+  .style-option.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); }
+  .style-preview { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 0.03em; margin-bottom: 4px; display: inline-block; padding: 2px 6px; border-radius: 3px; }
+  .style-label { font-size: 11px; color: #666; }
+  .btn-main { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
+  .btn-main:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,252,0.3); }
+  .results { display: none; }
+  .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+  .preview-sub { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; }
+  .sub-item { display: grid; grid-template-columns: 110px 1fr 80px; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; }
+  .sub-time { font-family: 'Space Mono', monospace; font-size: 10px; color: #7c5cfc; line-height: 1.6; }
+  .sub-text-edit { background: rgba(255,255,255,0.04); border: 1px solid transparent; border-radius: 6px; padding: 6px 8px; color: #f0f0f0; font-family: 'Outfit', sans-serif; font-size: 13px; outline: none; resize: none; width: 100%; }
+  .sub-text-edit:focus { border-color: rgba(124,92,252,0.4); background: rgba(124,92,252,0.05); }
+  .sub-duration { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 8px; color: #888; font-family: 'Space Mono', monospace; font-size: 11px; text-align: center; outline: none; width: 100%; }
+  .sub-duration:focus { border-color: rgba(124,92,252,0.4); color: #f0f0f0; }
+  .subtitle-list { max-height: 320px; overflow-y: auto; margin-bottom: 16px; }
+  .subtitle-list::-webkit-scrollbar { width: 4px; }
+  .subtitle-list::-webkit-scrollbar-thumb { background: rgba(124,92,252,0.3); border-radius: 2px; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-secondary { flex: 1; padding: 11px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #f0f0f0; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+  .list-header { display: grid; grid-template-columns: 110px 1fr 80px; gap: 8px; padding: 0 0 8px; font-size: 10px; color: #555; letter-spacing: 0.06em; text-transform: uppercase; }
+  .success-msg { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #00ff88; margin-top: 12px; display: none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="tag">100% Gratuit · Sans filigrane · Aucune API</div>
+  <h1>Générateur de sous-titres</h1>
+  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Collez votre script · Export SRT</p>
+
+  <div class="card">
+    <div class="card-title"><span class="step-number">1</span> Collez votre script</div>
+    <textarea id="scriptInput" rows="8" placeholder="Collez ici le texte de votre voix off, une phrase par ligne...
+
+Exemple :
+Vous avez pris le pire starter d'Écarlate et Violet
+Et vous le savez même pas
+On commence avec Flamigator..."></textarea>
+    <p class="hint">Mettez <span>une phrase par ligne</span> — chaque ligne deviendra un sous-titre.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="step-number">2</span> Durée de la vidéo</div>
+    <div class="duration-row">
+      <input type="number" id="videoDuration" value="40" min="1" max="600" />
+      <span class="duration-label">secondes — les timings seront répartis automatiquement</span>
+    </div>
+    <p class="hint">Vous pourrez ajuster chaque timing manuellement ensuite.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="step-number">3</span> Style des sous-titres</div>
+    <div class="style-grid">
+      <div class="style-option active" data-style="white" onclick="selectStyle(this)">
+        <div class="style-preview" style="color:#fff;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;">SOUS-TITRE</div>
+        <div class="style-label">Blanc · contour noir ✓</div>
+      </div>
+      <div class="style-option" data-style="yellow" onclick="selectStyle(this)">
+        <div class="style-preview" style="color:#FFE500;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;">SOUS-TITRE</div>
+        <div class="style-label">Jaune · contour noir</div>
+      </div>
+      <div class="style-option" data-style="tiktok" onclick="selectStyle(this)">
+        <div class="style-preview" style="color:#fff;background:#000;padding:2px 10px;border-radius:4px;">SOUS-TITRE</div>
+        <div class="style-label">Blanc · fond noir</div>
+      </div>
+      <div class="style-option" data-style="neon" onclick="selectStyle(this)">
+        <div class="style-preview" style="color:#00ff88;text-shadow:0 0 8px #00ff88;">SOUS-TITRE</div>
+        <div class="style-label">Vert néon</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-main" onclick="generate()">🎬 Générer les sous-titres</button>
+
+  <div class="results" id="results">
+    <div class="card">
+      <div class="card-title">Aperçu style</div>
+      <div class="preview-box">
+        <div class="preview-sub" id="previewSub">APERÇU DU TEXTE</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sous-titres · <span style="color:#7c5cfc;" id="subCount">0</span> segments · <span style="color:#555;font-size:10px;">cliquez pour modifier</span></div>
+      <div class="list-header"><div>Timing</div><div>Texte</div><div>Durée(s)</div></div>
+      <div class="subtitle-list" id="subtitleList"></div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="exportSRT()">⬇️ Exporter SRT</button>
+        <button class="btn-secondary" onclick="exportTXT()">📄 Exporter TXT</button>
+      </div>
+      <div class="success-msg" id="successMsg">✅ Fichier téléchargé avec succès !</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let segments = [];
+  let selectedStyle = 'white';
+
+  function selectStyle(el) {
+    document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedStyle = el.dataset.style;
+    if (segments.length > 0) updatePreview(segments[0].text);
+  }
+
+  function updatePreview(text) {
+    const sub = document.getElementById('previewSub');
+    sub.textContent = text.toUpperCase();
+    sub.style.cssText = "font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;line-height:1.2;text-transform:uppercase;";
+    if (selectedStyle === 'white') {
+      sub.style.color = '#fff';
+      sub.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000';
+    } else if (selectedStyle === 'yellow') {
+      sub.style.color = '#FFE500';
+      sub.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000';
+    } else if (selectedStyle === 'tiktok') {
+      sub.style.color = '#fff';
+      sub.style.background = '#000';
+      sub.style.padding = '4px 14px';
+      sub.style.borderRadius = '6px';
+    } else if (selectedStyle === 'neon') {
+      sub.style.color = '#00ff88';
+      sub.style.textShadow = '0 0 10px #00ff88,0 0 20px #00ff8855';
+    }
+  }
+
+  function generate() {
+    const raw = document.getElementById('scriptInput').value.trim();
+    const duration = parseFloat(document.getElementById('videoDuration').value) || 40;
+    if (!raw) { alert('Veuillez coller votre script !'); return; }
+
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const timePerSeg = duration / lines.length;
+
+    segments = lines.map((text, i) => ({
+      text,
+      start: i * timePerSeg,
+      end: (i + 1) * timePerSeg,
+      duration: timePerSeg
+    }));
+
+    document.getElementById('subCount').textContent = segments.length;
+    renderList();
+    updatePreview(segments[0].text);
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function formatTime(s) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = Math.floor(s % 60);
+    const ms = Math.round((s % 1) * 1000);
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')},${String(ms).padStart(3,'0')}`;
+  }
+
+  function renderList() {
+    const list = document.getElementById('subtitleList');
+    list.innerHTML = '';
+    segments.forEach((seg, i) => {
+      const div = document.createElement('div');
+      div.className = 'sub-item';
+      div.innerHTML = `
+        <div class="sub-time">${formatTime(seg.start)}<br>→ ${formatTime(seg.end)}</div>
+        <textarea class="sub-text-edit" rows="2" onfocus="updatePreview(this.value)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
+        <input class="sub-duration" type="number" value="${seg.duration.toFixed(1)}" min="0.5" step="0.5" onchange="updateDuration(${i}, this.value)" title="Durée en secondes" />
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  function updateDuration(index, val) {
+    segments[index].duration = parseFloat(val) || 2;
+    rebuildTimings();
+  }
+
+  function rebuildTimings() {
+    let cursor = segments[0].start;
+    segments.forEach(seg => {
+      seg.start = cursor;
+      seg.end = cursor + seg.duration;
+      cursor = seg.end;
+    });
+    renderList();
+  }
+
+  function exportSRT() {
+    let srt = '';
+    segments.forEach((seg, i) => {
+      srt += `${i + 1}\n${formatTime(seg.start)} --> ${formatTime(seg.end)}\n${seg.text.trim().toUpperCase()}\n\n`;
+    });
+    downloadFile('sous-titres.srt', srt);
+  }
+
+  function exportTXT() {
+    const txt = segments.map(s => s.text.trim().toUpperCase()).join('\n');
+    downloadFile('sous-titres.txt', txt);
+  }
+
+  function downloadFile(filename, content) {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    const msg = document.getElementById('successMsg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+  }
+</script>
+</body>
+</html>

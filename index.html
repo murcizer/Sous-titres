@@ -38,17 +38,18 @@
   .btn-main { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
   .btn-main:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,252,0.3); }
   .results { display: none; }
-  .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 100px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; overflow: visible; }
 
- @keyframes zoom-dezoom {
-  0%   { transform: scale(4); opacity: 0; }
-  50%  { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
+  @keyframes zoom-dezoom {
+    0%   { transform: scale(3.5); opacity: 0; }
+    40%  { transform: scale(0.95); opacity: 1; }
+    60%  { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
 
-@keyframes zoom-out {
-  0%   { transform: scale(1); opacity: 1; }
-  100% { transform: scale(0.2); opacity: 0; }
+  @keyframes zoom-out {
+    0%   { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0.1); opacity: 0; }
   }
 
   .preview-sub {
@@ -57,11 +58,12 @@
     letter-spacing: 0.04em;
     line-height: 1.2;
     text-transform: uppercase;
-    animation: zoom-dezoom 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    display: inline-block;
+    animation: zoom-dezoom 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
 
   .preview-sub.zoom-out {
-    animation: zoom-out 0.18s ease-in forwards;
+    animation: zoom-out 0.2s ease-in forwards;
   }
 
   .player-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }

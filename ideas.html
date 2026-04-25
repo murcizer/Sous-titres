@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes idées TikTok</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0f0; min-height: 100vh; padding: 24px; background-image: radial-gradient(ellipse at 20% 20%, rgba(99,60,180,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(30,120,255,0.08) 0%, transparent 60%); }
+  .app { max-width: 780px; margin: 0 auto; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7c5cfc; border: 1px solid rgba(124,92,252,0.4); padding: 2px 8px; border-radius: 20px; margin-bottom: 12px; }
+  h1 { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #555; margin-bottom: 24px; }
+
+  /* Stats */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; text-align: center; }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #7c5cfc; }
+  .stat-label { font-size: 11px; color: #555; margin-top: 2px; }
+
+  /* Formulaire */
+  .form-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+  .form-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .form-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 11px; color: #666; letter-spacing: 0.04em; text-transform: uppercase; }
+  input[type="text"], input[type="number"], select, textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 9px 12px; color: #f0f0f0; font-family: 'Outfit', sans-serif; font-size: 13px; outline: none; transition: border-color 0.2s; }
+  input:focus, select:focus, textarea:focus { border-color: rgba(124,92,252,0.5); }
+  select option { background: #1a1a2e; }
+  textarea { resize: vertical; min-height: 60px; }
+  .btn-add { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 10px; color: white; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.2s; }
+  .btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,92,252,0.3); }
+
+  /* Filtres */
+  .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn { padding: 6px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: #888; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active { background: rgba(124,92,252,0.15); border-color: rgba(124,92,252,0.4); color: #7c5cfc; }
+
+  /* Cards idées */
+  .ideas-grid { display: flex; flex-direction: column; gap: 10px; }
+  .idea-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px; transition: all 0.2s; }
+  .idea-card:hover { border-color: rgba(255,255,255,0.15); }
+  .idea-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+  .idea-title { font-size: 15px; font-weight: 500; color: #f0f0f0; flex: 1; }
+  .idea-badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .badge-idee { background: rgba(124,92,252,0.15); color: #a78bfa; border: 1px solid rgba(124,92,252,0.3); }
+  .badge-encours { background: rgba(255,165,0,0.12); color: #fbbf24; border: 1px solid rgba(255,165,0,0.3); }
+  .badge-publie { background: rgba(0,200,100,0.12); color: #34d399; border: 1px solid rgba(0,200,100,0.3); }
+  .badge-type { background: rgba(255,255,255,0.06); color: #888; border: 1px solid rgba(255,255,255,0.1); }
+  .idea-accroche { font-size: 13px; color: #888; font-style: italic; margin-bottom: 8px; line-height: 1.5; }
+  .idea-notes { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+  .idea-footer { display: flex; justify-content: space-between; align-items: center; }
+  .idea-vues { font-family: 'Space Mono', monospace; font-size: 12px; color: #7c5cfc; }
+  .idea-date { font-size: 11px; color: #444; }
+  .idea-actions { display: flex; gap: 6px; }
+  .btn-action { padding: 5px 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: #888; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .btn-action:hover { background: rgba(255,255,255,0.08); color: #f0f0f0; }
+  .btn-delete { color: #ef4444; border-color: rgba(239,68,68,0.2); }
+  .btn-delete:hover { background: rgba(239,68,68,0.08); }
+
+  .empty { text-align: center; padding: 40px; color: #555; font-size: 14px; }
+
+  /* Modal édition */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #12121f; border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 24px; width: 100%; max-width: 520px; }
+  .modal-title { font-size: 15px; font-weight: 500; color: #f0f0f0; margin-bottom: 16px; }
+  .modal-btns { display: flex; gap: 8px; margin-top: 16px; }
+  .btn-save { flex: 1; padding: 10px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-cancel { padding: 10px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #888; font-size: 13px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="tag">Mes idées TikTok</div>
+  <h1>Gestionnaire d'idées</h1>
+  <p class="subtitle">Toutes vos idées de vidéos au même endroit · Sauvegarde automatique</p>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total idées</div></div>
+    <div class="stat-card"><div class="stat-num" id="statIdee">0</div><div class="stat-label">À faire</div></div>
+    <div class="stat-card"><div class="stat-num" id="statEncours">0</div><div class="stat-label">En cours</div></div>
+    <div class="stat-card"><div class="stat-num" id="statPublie">0</div><div class="stat-label">Publiées</div></div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-title">Nouvelle idée</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Sujet de la vidéo</label>
+        <input type="text" id="newTitre" placeholder="Ex: Tier list des starters Écarlate & Violet..." />
+      </div>
+      <div class="form-group full">
+        <label>Phrase d'accroche</label>
+        <input type="text" id="newAccroche" placeholder="Ex: Vous avez pris le pire starter et vous le savez même pas..." />
+      </div>
+      <div class="form-group">
+        <label>Type de contenu</label>
+        <select id="newType">
+          <option value="Tier list">Tier list</option>
+          <option value="Top">Top</option>
+          <option value="Astuce">Astuce</option>
+          <option value="Débat">Débat</option>
+          <option value="Did you know">Did you know</option>
+          <option value="Analyse">Analyse</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Statut</label>
+        <select id="newStatut">
+          <option value="idee">💡 Idée</option>
+          <option value="encours">🎬 En cours</option>
+          <option value="publie">✅ Publiée</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Notes / idées de script</label>
+        <textarea id="newNotes" placeholder="Notez vos idées de contenu, points importants à couvrir..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Vues (si publiée)</label>
+        <input type="number" id="newVues" placeholder="0" min="0" />
+      </div>
+    </div>
+    <button class="btn-add" onclick="addIdea()">+ Ajouter l'idée</button>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('all', this)">Toutes</button>
+    <button class="filter-btn" onclick="setFilter('idee', this)">💡 À faire</button>
+    <button class="filter-btn" onclick="setFilter('encours', this)">🎬 En cours</button>
+    <button class="filter-btn" onclick="setFilter('publie', this)">✅ Publiées</button>
+  </div>
+
+  <div class="ideas-grid" id="ideasGrid">
+    <div class="empty">Aucune idée pour l'instant — ajoutez votre première idée ci-dessus !</div>
+  </div>
+</div>
+
+<!-- Modal édition -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">Modifier l'idée</div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Sujet</label><input type="text" id="editTitre" /></div>
+      <div class="form-group full"><label>Accroche</label><input type="text" id="editAccroche" /></div>
+      <div class="form-group"><label>Type</label>
+        <select id="editType">
+          <option value="Tier list">Tier list</option>
+          <option value="Top">Top</option>
+          <option value="Astuce">Astuce</option>
+          <option value="Débat">Débat</option>
+          <option value="Did you know">Did you know</option>
+          <option value="Analyse">Analyse</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Statut</label>
+        <select id="editStatut">
+          <option value="idee">💡 Idée</option>
+          <option value="encours">🎬 En cours</option>
+          <option value="publie">✅ Publiée</option>
+        </select>
+      </div>
+      <div class="form-group full"><label>Notes</label><textarea id="editNotes"></textarea></div>
+      <div class="form-group"><label>Vues</label><input type="number" id="editVues" min="0" /></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="btn-save" onclick="saveEdit()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let ideas = JSON.parse(localStorage.getItem('tiktok_ideas') || '[]');
+  let currentFilter = 'all';
+  let editingId = null;
+
+  function save() { localStorage.setItem('tiktok_ideas', JSON.stringify(ideas)); }
+
+  function addIdea() {
+    const titre = document.getElementById('newTitre').value.trim();
+    if (!titre) { alert('Ajoutez un sujet !'); return; }
+    ideas.unshift({
+      id: Date.now(),
+      titre,
+      accroche: document.getElementById('newAccroche').value.trim(),
+      type: document.getElementById('newType').value,
+      statut: document.getElementById('newStatut').value,
+      notes: document.getElementById('newNotes').value.trim(),
+      vues: parseInt(document.getElementById('newVues').value) || 0,
+      date: new Date().toLocaleDateString('fr-FR')
+    });
+    save();
+    ['newTitre','newAccroche','newNotes','newVues'].forEach(id => document.getElementById(id).value = '');
+    render();
+  }
+
+  function deleteIdea(id) {
+    if (!confirm('Supprimer cette idée ?')) return;
+    ideas = ideas.filter(i => i.id !== id);
+    save(); render();
+  }
+
+  function openEdit(id) {
+    editingId = id;
+    const idea = ideas.find(i => i.id === id);
+    document.getElementById('editTitre').value = idea.titre;
+    document.getElementById('editAccroche').value = idea.accroche;
+    document.getElementById('editType').value = idea.type;
+    document.getElementById('editStatut').value = idea.statut;
+    document.getElementById('editNotes').value = idea.notes;
+    document.getElementById('editVues').value = idea.vues;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); editingId = null; }
+
+  function saveEdit() {
+    const idea = ideas.find(i => i.id === editingId);
+    idea.titre = document.getElementById('editTitre').value.trim();
+    idea.accroche = document.getElementById('editAccroche').value.trim();
+    idea.type = document.getElementById('editType').value;
+    idea.statut = document.getElementById('editStatut').value;
+    idea.notes = document.getElementById('editNotes').value.trim();
+    idea.vues = parseInt(document.getElementById('editVues').value) || 0;
+    save(); closeModal(); render();
+  }
+
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
+
+  function badgeClass(statut) {
+    return statut === 'idee' ? 'badge-idee' : statut === 'encours' ? 'badge-encours' : 'badge-publie';
+  }
+
+  function badgeLabel(statut) {
+    return statut === 'idee' ? '💡 Idée' : statut === 'encours' ? '🎬 En cours' : '✅ Publiée';
+  }
+
+  function render() {
+    const filtered = currentFilter === 'all' ? ideas : ideas.filter(i => i.statut === currentFilter);
+    const grid = document.getElementById('ideasGrid');
+
+    document.getElementById('statTotal').textContent = ideas.length;
+    document.getElementById('statIdee').textContent = ideas.filter(i => i.statut === 'idee').length;
+    document.getElementById('statEncours').textContent = ideas.filter(i => i.statut === 'encours').length;
+    document.getElementById('statPublie').textContent = ideas.filter(i => i.statut === 'publie').length;
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div class="empty">Aucune idée dans cette catégorie.</div>';
+      return;
+    }
+
+    grid.innerHTML = filtered.map(idea => `
+      <div class="idea-card">
+        <div class="idea-header">
+          <div class="idea-title">${idea.titre}</div>
+          <div class="idea-badges">
+            <span class="badge badge-type">${idea.type}</span>
+            <span class="badge ${badgeClass(idea.statut)}">${badgeLabel(idea.statut)}</span>
+          </div>
+        </div>
+        ${idea.accroche ? `<div class="idea-accroche">"${idea.accroche}"</div>` : ''}
+        ${idea.notes ? `<div class="idea-notes">${idea.notes}</div>` : ''}
+        <div class="idea-footer">
+          <div>
+            ${idea.vues > 0 ? `<div class="idea-vues">${idea.vues.toLocaleString('fr-FR')} vues</div>` : ''}
+            <div class="idea-date">${idea.date}</div>
+          </div>
+          <div class="idea-actions">
+            <button class="btn-action" onclick="openEdit(${idea.id})">✏️ Modifier</button>
+            <button class="btn-action btn-delete" onclick="deleteIdea(${idea.id})">🗑️ Supprimer</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  render();
+</script>
+</body>
+</html>

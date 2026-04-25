@@ -38,18 +38,17 @@
   .btn-main { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
   .btn-main:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,252,0.3); }
   .results { display: none; }
-  .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; overflow: visible; }
 
-  @keyframes zoom-dezoom {
-    0%   { transform: scale(3.5); opacity: 0; }
-    40%  { transform: scale(0.95); opacity: 1; }
-    60%  { transform: scale(1.05); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  @keyframes zoom-out {
-    0%   { transform: scale(1); opacity: 1; }
-    100% { transform: scale(0.1); opacity: 0; }
+  .preview-box {
+    background: #111;
+    border-radius: 10px;
+    padding: 30px 20px;
+    text-align: center;
+    margin-bottom: 16px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .preview-sub {
@@ -59,11 +58,17 @@
     line-height: 1.2;
     text-transform: uppercase;
     display: inline-block;
-    animation: zoom-dezoom 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
 
-  .preview-sub.zoom-out {
-    animation: zoom-out 0.2s ease-in forwards;
+  @keyframes zoom-dezoom {
+    0%   { transform: scale(2); opacity: 0; }
+    40%  { transform: scale(0.95); opacity: 1; }
+    65%  { transform: scale(1.03); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .zoom-anim {
+    animation: zoom-dezoom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
   }
 
   .player-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
@@ -168,34 +173,23 @@
     document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
     el.classList.add('active');
     selectedStyle = el.dataset.style;
-    if (segments.length > 0) updatePreview(segments[0].text, false);
+    if (segments.length > 0) updatePreview(segments[0].text);
   }
 
   function applyStyle(sub) {
-    sub.style.cssText = "font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;line-height:1.2;text-transform:uppercase;";
-    if (selectedStyle === 'white') { sub.style.color='#fff'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; }
-    else if (selectedStyle === 'yellow') { sub.style.color='#FFE500'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; }
-    else if (selectedStyle === 'tiktok') { sub.style.color='#fff'; sub.style.background='#000'; sub.style.padding='4px 14px'; sub.style.borderRadius='6px'; }
-    else if (selectedStyle === 'neon') { sub.style.color='#00ff88'; sub.style.textShadow='0 0 10px #00ff88,0 0 20px #00ff8855'; }
+    if (selectedStyle === 'white') { sub.style.color='#fff'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; sub.style.background=''; sub.style.padding=''; }
+    else if (selectedStyle === 'yellow') { sub.style.color='#FFE500'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; sub.style.background=''; sub.style.padding=''; }
+    else if (selectedStyle === 'tiktok') { sub.style.color='#fff'; sub.style.background='#000'; sub.style.padding='4px 14px'; sub.style.borderRadius='6px'; sub.style.textShadow=''; }
+    else if (selectedStyle === 'neon') { sub.style.color='#00ff88'; sub.style.textShadow='0 0 10px #00ff88,0 0 20px #00ff8855'; sub.style.background=''; sub.style.padding=''; }
   }
 
-  function updatePreview(text, animate = true) {
+  function updatePreview(text) {
     const sub = document.getElementById('previewSub');
-    if (animate) {
-      sub.classList.add('zoom-out');
-      setTimeout(() => {
-        sub.classList.remove('zoom-out');
-        sub.style.animation = 'none';
-        sub.textContent = text.toUpperCase();
-        applyStyle(sub);
-        void sub.offsetWidth;
-        sub.style.animation = 'zoom-dezoom 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
-      }, 160);
-    } else {
-      sub.textContent = text.toUpperCase();
-      applyStyle(sub);
-      sub.style.animation = 'zoom-dezoom 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
-    }
+    sub.classList.remove('zoom-anim');
+    sub.textContent = text.toUpperCase();
+    applyStyle(sub);
+    void sub.offsetWidth; // force reflow
+    sub.classList.add('zoom-anim');
   }
 
   function generate() {
@@ -207,7 +201,7 @@
     segments = lines.map((text, i) => ({ text, start: i * timePerSeg, end: (i+1)*timePerSeg, duration: timePerSeg }));
     document.getElementById('subCount').textContent = segments.length;
     renderList();
-    updatePreview(segments[0].text, false);
+    updatePreview(segments[0].text);
     document.getElementById('results').style.display = 'block';
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
   }
@@ -223,7 +217,7 @@
       document.getElementById('progressFill').style.width = Math.min((currentTime/totalDuration)*100, 100) + '%';
       document.getElementById('previewTimer').textContent = currentTime.toFixed(1) + 's';
       const idx = segments.findIndex(s => currentTime >= s.start && currentTime < s.end);
-      if (idx !== -1 && idx !== lastIdx) { updatePreview(segments[idx].text, true); highlightSeg(idx); lastIdx = idx; }
+      if (idx !== -1 && idx !== lastIdx) { updatePreview(segments[idx].text); highlightSeg(idx); lastIdx = idx; }
       if (currentTime >= totalDuration) stopPlay();
     }, 50);
   }
@@ -252,7 +246,7 @@
       const div = document.createElement('div');
       div.className = 'sub-item';
       div.innerHTML = `<div class="sub-time">${formatTime(seg.start)}<br>→ ${formatTime(seg.end)}</div>
-        <textarea class="sub-text-edit" rows="2" onfocus="updatePreview(this.value,true)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
+        <textarea class="sub-text-edit" rows="2" onfocus="updatePreview(this.value)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
         <input class="sub-duration" type="number" value="${seg.duration.toFixed(1)}" min="0.5" step="0.5" onchange="updateDuration(${i},this.value)" />`;
       list.appendChild(div);
     });

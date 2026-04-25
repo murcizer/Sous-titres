@@ -40,21 +40,29 @@
   .results { display: none; }
   .preview-box { background: #111; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 16px; min-height: 100px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 
-  @keyframes bounce-in {
-    0%   { transform: scale(0.4); opacity: 0; }
-    50%  { transform: scale(1.15); opacity: 1; }
-    70%  { transform: scale(0.95); }
-    85%  { transform: scale(1.05); }
+  @keyframes zoom-dezoom {
+    0%   { transform: scale(2.2); opacity: 0; }
+    35%  { transform: scale(1); opacity: 1; }
     100% { transform: scale(1); opacity: 1; }
   }
-  @keyframes bounce-out {
+
+  @keyframes zoom-out {
     0%   { transform: scale(1); opacity: 1; }
-    30%  { transform: scale(1.1); opacity: 0.8; }
-    100% { transform: scale(0.4); opacity: 0; }
+    100% { transform: scale(0.6); opacity: 0; }
   }
 
-  .preview-sub { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; animation: bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97); }
-  .preview-sub.bounce-out { animation: bounce-out 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards; }
+  .preview-sub {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    animation: zoom-dezoom 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .preview-sub.zoom-out {
+    animation: zoom-out 0.18s ease-in forwards;
+  }
 
   .player-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
   .btn-play { padding: 8px 20px; background: rgba(124,92,252,0.15); border: 1px solid rgba(124,92,252,0.4); border-radius: 8px; color: #7c5cfc; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
@@ -82,9 +90,9 @@
 </head>
 <body>
 <div class="app">
-  <div class="tag">100% Gratuit · Sans filigrane · Animation Bounce</div>
+  <div class="tag">100% Gratuit · Sans filigrane · Zoom Dézoom</div>
   <h1>Générateur de sous-titres</h1>
-  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Animation bounce · Export SRT</p>
+  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Effet zoom dézoom · Export SRT</p>
 
   <div class="card">
     <div class="card-title"><span class="step-number">1</span> Collez votre script</div>
@@ -172,19 +180,19 @@
   function updatePreview(text, animate = true) {
     const sub = document.getElementById('previewSub');
     if (animate) {
-      sub.classList.add('bounce-out');
+      sub.classList.add('zoom-out');
       setTimeout(() => {
-        sub.classList.remove('bounce-out');
+        sub.classList.remove('zoom-out');
         sub.style.animation = 'none';
         sub.textContent = text.toUpperCase();
         applyStyle(sub);
         void sub.offsetWidth;
-        sub.style.animation = 'bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
-      }, 180);
+        sub.style.animation = 'zoom-dezoom 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+      }, 160);
     } else {
       sub.textContent = text.toUpperCase();
       applyStyle(sub);
-      sub.style.animation = 'bounce-in 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97)';
+      sub.style.animation = 'zoom-dezoom 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
     }
   }
 
@@ -202,9 +210,7 @@
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
   }
 
-  function togglePlay() {
-    isPlaying ? stopPlay() : startPlay();
-  }
+  function togglePlay() { isPlaying ? stopPlay() : startPlay(); }
 
   function startPlay() {
     isPlaying = true; currentTime = 0;

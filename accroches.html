@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur d'accroches Pokémon</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0f0; min-height: 100vh; padding: 24px; background-image: radial-gradient(ellipse at 20% 20%, rgba(99,60,180,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(30,120,255,0.08) 0%, transparent 60%); }
+  .app { max-width: 720px; margin: 0 auto; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7c5cfc; border: 1px solid rgba(124,92,252,0.4); padding: 2px 8px; border-radius: 20px; margin-bottom: 12px; }
+  h1 { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #555; margin-bottom: 24px; }
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .card-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  label { font-size: 11px; color: #666; letter-spacing: 0.04em; text-transform: uppercase; }
+  input[type="text"], select, textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; color: #f0f0f0; font-family: 'Outfit', sans-serif; font-size: 13px; outline: none; transition: border-color 0.2s; }
+  input:focus, select:focus, textarea:focus { border-color: rgba(124,92,252,0.5); }
+  select option { background: #1a1a2e; }
+  textarea { resize: vertical; min-height: 80px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .api-hint { font-size: 11px; color: #555; margin-top: 6px; line-height: 1.5; }
+  .api-hint a { color: #7c5cfc; text-decoration: none; }
+  .btn-generate { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-generate:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,92,252,0.3); }
+  .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+  .loading { display: none; text-align: center; padding: 30px; color: #555; font-size: 13px; }
+  .loading-dots { display: inline-flex; gap: 4px; margin-top: 8px; }
+  .loading-dots span { width: 6px; height: 6px; border-radius: 50%; background: #7c5cfc; animation: dot 1.2s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+  .results { display: none; }
+  .platform-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tab { padding: 7px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: #888; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .tab.active { background: rgba(124,92,252,0.15); border-color: rgba(124,92,252,0.4); color: #7c5cfc; }
+  .accroches-list { display: flex; flex-direction: column; gap: 10px; }
+  .accroche-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; transition: all 0.2s; position: relative; }
+  .accroche-item:hover { border-color: rgba(255,255,255,0.15); }
+  .accroche-num { font-size: 10px; font-weight: 600; color: #7c5cfc; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .accroche-type { font-size: 10px; color: #555; margin-bottom: 6px; }
+  .accroche-text { font-size: 15px; color: #f0f0f0; line-height: 1.5; margin-bottom: 10px; font-weight: 500; }
+  .accroche-why { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 10px; font-style: italic; }
+  .accroche-actions { display: flex; gap: 6px; }
+  .btn-copy { padding: 5px 12px; background: rgba(124,92,252,0.1); border: 1px solid rgba(124,92,252,0.3); border-radius: 6px; color: #7c5cfc; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .btn-copy:hover { background: rgba(124,92,252,0.2); }
+  .btn-copy.copied { background: rgba(0,200,100,0.1); border-color: rgba(0,200,100,0.3); color: #34d399; }
+  .btn-save-idea { padding: 5px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #888; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .btn-save-idea:hover { background: rgba(255,255,255,0.08); color: #f0f0f0; }
+  .score-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .score-label { font-size: 10px; color: #555; min-width: 60px; }
+  .score-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #7c5cfc, #4f8bff); }
+  .error-msg { background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #ff8080; margin-top: 12px; display: none; }
+  .saved-notif { position: fixed; bottom: 20px; right: 20px; background: rgba(0,200,100,0.15); border: 1px solid rgba(0,200,100,0.3); border-radius: 10px; padding: 10px 16px; font-size: 13px; color: #34d399; display: none; z-index: 100; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="tag">IA Pokémon · TikTok & YouTube</div>
+  <h1>Générateur d'accroches</h1>
+  <p class="subtitle">Accroches virales générées par IA · Optimisées TikTok & YouTube Shorts</p>
+
+  <div class="card">
+    <div class="card-title">Clé API Anthropic</div>
+    <div class="form-group">
+      <input type="password" id="apiKey" placeholder="sk-ant-..." />
+      <p class="api-hint">Créez votre clé gratuite sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> · Jamais stockée</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Votre vidéo</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Sujet principal</label>
+        <input type="text" id="sujet" placeholder="Ex: Tier list starters Écarlate Violet" />
+      </div>
+      <div class="form-group">
+        <label>Type de contenu</label>
+        <select id="typeContenu">
+          <option value="tier list">Tier list / Classement</option>
+          <option value="meilleure équipe">Meilleure équipe</option>
+          <option value="analyse">Analyse / Review</option>
+          <option value="astuce">Astuce / Guide</option>
+          <option value="débat">Débat / Opinion</option>
+          <option value="did you know">Did you know</option>
+          <option value="actualité">Actualité Pokémon</option>
+          <option value="challenge">Challenge</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Jeu Pokémon</label>
+        <select id="jeu">
+          <option value="Écarlate et Violet">Écarlate & Violet</option>
+          <option value="Épée et Bouclier">Épée & Bouclier</option>
+          <option value="Soleil et Lune">Soleil & Lune</option>
+          <option value="X et Y">X & Y</option>
+          <option value="Noir et Blanc">Noir & Blanc</option>
+          <option value="Noir 2 et Blanc 2">Noir 2 & Blanc 2</option>
+          <option value="Or et Argent">Or & Argent</option>
+          <option value="Rouge et Bleu">Rouge & Bleu</option>
+          <option value="Vents et Vagues (Gen 10)">Vents & Vagues (Gen 10)</option>
+          <option value="tous les jeux">Tous les jeux</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Ton souhaité</label>
+        <select id="ton">
+          <option value="provocateur">Provocateur / Clash</option>
+          <option value="mystérieux">Mystérieux / Suspense</option>
+          <option value="informatif">Informatif / Sérieux</option>
+          <option value="humoristique">Humoristique</option>
+          <option value="nostalgique">Nostalgique</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column: 1/-1;">
+        <label>Détails supplémentaires (optionnel)</label>
+        <textarea id="details" placeholder="Ex: Je parle de Flamigator, je veux insister sur son talent caché Inconscient..."></textarea>
+      </div>
+    </div>
+    <button class="btn-generate" id="btnGenerate" onclick="generate()">
+      ⚡ Générer les accroches
+    </button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div>L'IA génère vos accroches...</div>
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="results" id="results">
+    <div class="platform-tabs">
+      <button class="tab active" onclick="showPlatform('tiktok', this)">TikTok</button>
+      <button class="tab" onclick="showPlatform('youtube', this)">YouTube Shorts</button>
+      <button class="tab" onclick="showPlatform('all', this)">Toutes</button>
+    </div>
+    <div class="accroches-list" id="accrochemList"></div>
+  </div>
+</div>
+
+<div class="saved-notif" id="savedNotif">✅ Accroche sauvegardée dans vos idées !</div>
+
+<script>
+  let allAccroches = [];
+  let currentPlatform = 'tiktok';
+
+  async function generate() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const sujet = document.getElementById('sujet').value.trim();
+    if (!apiKey) { showError('Entrez votre clé API Anthropic !'); return; }
+    if (!sujet) { showError('Entrez le sujet de votre vidéo !'); return; }
+
+    const typeContenu = document.getElementById('typeContenu').value;
+    const jeu = document.getElementById('jeu').value;
+    const ton = document.getElementById('ton').value;
+    const details = document.getElementById('details').value.trim();
+
+    document.getElementById('btnGenerate').disabled = true;
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('errorMsg').style.display = 'none';
+
+    const prompt = `Tu es un expert en création de contenu TikTok et YouTube Shorts spécialisé dans la communauté Pokémon francophone. Tu connais parfaitement les codes viraux des réseaux sociaux gaming.
+
+Génère 6 accroches virales pour une vidéo avec ces paramètres :
+- Sujet : ${sujet}
+- Type de contenu : ${typeContenu}
+- Jeu : ${jeu}
+- Ton souhaité : ${ton}
+${details ? `- Détails : ${details}` : ''}
+
+Génère 3 accroches optimisées pour TikTok (courtes, percutantes, max 15 mots) et 3 pour YouTube Shorts (légèrement plus longues, max 20 mots).
+
+Réponds UNIQUEMENT en JSON valide, sans aucun texte avant ou après, sans backticks, exactement ce format :
+{
+  "accroches": [
+    {
+      "plateforme": "tiktok",
+      "type": "Provocation directe",
+      "texte": "L'accroche ici",
+      "pourquoi": "Explication courte pourquoi ça marche",
+      "score_viralite": 85
+    }
+  ]
+}`;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error?.message || 'Erreur API');
+      }
+
+      const data = await res.json();
+      const text = data.content[0].text.trim();
+      const clean = text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+      allAccroches = parsed.accroches || [];
+
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      document.getElementById('btnGenerate').disabled = false;
+      showPlatform(currentPlatform, document.querySelector('.tab.active'));
+
+    } catch(err) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('btnGenerate').disabled = false;
+      showError('Erreur : ' + err.message);
+    }
+  }
+
+  function showPlatform(platform, btn) {
+    currentPlatform = platform;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    const filtered = platform === 'all' ? allAccroches : allAccroches.filter(a => a.plateforme === platform);
+    renderAccroches(filtered);
+  }
+
+  function renderAccroches(list) {
+    const container = document.getElementById('accrochemList');
+    if (list.length === 0) { container.innerHTML = '<div style="text-align:center;padding:30px;color:#555;">Aucune accroche pour cette plateforme.</div>'; return; }
+    container.innerHTML = list.map((a, i) => `
+      <div class="accroche-item">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div class="accroche-num">Accroche ${i + 1} · ${a.plateforme === 'tiktok' ? 'TikTok' : 'YouTube Shorts'}</div>
+          <div class="accroche-type">${a.type || ''}</div>
+        </div>
+        <div class="score-bar">
+          <div class="score-label">Viralité</div>
+          <div class="score-track"><div class="score-fill" style="width:${a.score_viralite || 75}%"></div></div>
+          <div style="font-size:11px;color:#7c5cfc;min-width:30px;text-align:right;">${a.score_viralite || 75}%</div>
+        </div>
+        <div class="accroche-text">"${a.texte}"</div>
+        <div class="accroche-why">${a.pourquoi}</div>
+        <div class="accroche-actions">
+          <button class="btn-copy" onclick="copyAccroche(this, '${a.texte.replace(/'/g, "\\'")}')">Copier</button>
+          <button class="btn-save-idea" onclick="saveToIdeas('${a.texte.replace(/'/g, "\\'")}')">Sauvegarder dans mes idées</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function copyAccroche(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copié !';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copier'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function saveToIdeas(text) {
+    const ideas = JSON.parse(localStorage.getItem('tiktok_ideas') || '[]');
+    ideas.unshift({
+      id: Date.now(),
+      titre: document.getElementById('sujet').value.trim(),
+      accroche: text,
+      type: document.getElementById('typeContenu').value,
+      statut: 'idee',
+      notes: '',
+      vues: 0,
+      date: new Date().toLocaleDateString('fr-FR')
+    });
+    localStorage.setItem('tiktok_ideas', JSON.stringify(ideas));
+    const notif = document.getElementById('savedNotif');
+    notif.style.display = 'block';
+    setTimeout(() => notif.style.display = 'none', 2500);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = '❌ ' + msg;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>

@@ -7,15 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Outfit', sans-serif;
-    background: #0a0a0f;
-    color: #f0f0f0;
-    min-height: 100vh;
-    padding: 24px;
-    background-image: radial-gradient(ellipse at 20% 20%, rgba(99,60,180,0.12) 0%, transparent 60%),
-                      radial-gradient(ellipse at 80% 80%, rgba(30,120,255,0.08) 0%, transparent 60%);
-  }
+  body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0f0; min-height: 100vh; padding: 24px; background-image: radial-gradient(ellipse at 20% 20%, rgba(99,60,180,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(30,120,255,0.08) 0%, transparent 60%); }
   h1 { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
   .app { max-width: 680px; margin: 0 auto; }
   .tag { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7c5cfc; border: 1px solid rgba(124,92,252,0.4); padding: 2px 8px; border-radius: 20px; margin-bottom: 20px; }
@@ -30,6 +22,15 @@
   .duration-row { display: flex; gap: 12px; align-items: center; }
   .duration-row input[type="number"] { width: 80px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 12px; color: #f0f0f0; font-family: 'Space Mono', monospace; font-size: 13px; outline: none; text-align: center; }
   .duration-label { font-size: 13px; color: #888; }
+
+  /* Mode selector */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0; }
+  .mode-option { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .mode-option.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); }
+  .mode-icon { font-size: 22px; margin-bottom: 6px; }
+  .mode-label { font-size: 13px; font-weight: 500; color: #f0f0f0; margin-bottom: 3px; }
+  .mode-desc { font-size: 11px; color: #666; }
+
   .style-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .style-option { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px; cursor: pointer; transition: all 0.2s; }
   .style-option.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); }
@@ -38,46 +39,16 @@
   .btn-main { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
   .btn-main:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,252,0.3); }
   .results { display: none; }
-
-  .preview-box {
-    background: #111;
-    border-radius: 10px;
-    padding: 30px 20px;
-    text-align: center;
-    margin-bottom: 16px;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .preview-sub {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 0.04em;
-    line-height: 1.2;
-    text-transform: uppercase;
-    display: inline-block;
-  }
-
-  @keyframes zoom-dezoom {
-    0%   { transform: scale(2); opacity: 0; }
-    40%  { transform: scale(0.95); opacity: 1; }
-    65%  { transform: scale(1.03); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-
-  .zoom-anim {
-    animation: zoom-dezoom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important;
-  }
-
+  .preview-box { background: #111; border-radius: 10px; padding: 30px 20px; text-align: center; margin-bottom: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
+  .preview-sub { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; display: inline-block; }
+  @keyframes zoom-dezoom { 0% { transform: scale(2); opacity: 0; } 40% { transform: scale(0.95); opacity: 1; } 65% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+  .zoom-anim { animation: zoom-dezoom 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards !important; }
   .player-controls { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
   .btn-play { padding: 8px 20px; background: rgba(124,92,252,0.15); border: 1px solid rgba(124,92,252,0.4); border-radius: 8px; color: #7c5cfc; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
   .btn-play:hover { background: rgba(124,92,252,0.25); }
   .progress-preview { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
   .progress-preview-fill { height: 100%; background: linear-gradient(90deg, #7c5cfc, #4f8bff); border-radius: 2px; width: 0%; transition: width 0.05s linear; }
   .preview-timer { font-family: 'Space Mono', monospace; font-size: 11px; color: #555; min-width: 40px; text-align: right; }
-
   .sub-item { display: grid; grid-template-columns: 110px 1fr 80px; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center; }
   .sub-item.active-sub { background: rgba(124,92,252,0.08); border-radius: 6px; padding: 10px 6px; }
   .sub-time { font-family: 'Space Mono', monospace; font-size: 10px; color: #7c5cfc; line-height: 1.6; }
@@ -93,13 +64,14 @@
   .btn-secondary:hover { background: rgba(255,255,255,0.1); }
   .list-header { display: grid; grid-template-columns: 110px 1fr 80px; gap: 8px; padding: 0 0 8px; font-size: 10px; color: #555; letter-spacing: 0.06em; text-transform: uppercase; }
   .success-msg { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #00ff88; margin-top: 12px; display: none; }
+  .mode-badge { display: inline-block; font-size: 10px; font-weight: 600; background: rgba(124,92,252,0.15); color: #7c5cfc; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="tag">100% Gratuit · Sans filigrane · Zoom Dézoom</div>
   <h1>Générateur de sous-titres</h1>
-  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Effet zoom dézoom · Export SRT</p>
+  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Phrase par phrase ou Mot par mot · Export SRT</p>
 
   <div class="card">
     <div class="card-title"><span class="step-number">1</span> Collez votre script</div>
@@ -110,14 +82,29 @@
   <div class="card">
     <div class="card-title"><span class="step-number">2</span> Durée de la vidéo</div>
     <div class="duration-row">
-      <input type="number" id="videoDuration" value="40" min="1" max="600" />
+      <input type="number" id="videoDuration" value="43" min="1" max="600" />
       <span class="duration-label">secondes — timings répartis automatiquement</span>
     </div>
-    <p class="hint">Vous pourrez ajuster chaque timing manuellement ensuite.</p>
   </div>
 
   <div class="card">
-    <div class="card-title"><span class="step-number">3</span> Style des sous-titres</div>
+    <div class="card-title"><span class="step-number">3</span> Mode de découpage</div>
+    <div class="mode-grid">
+      <div class="mode-option active" data-mode="phrase" onclick="selectMode(this)">
+        <div class="mode-icon">📝</div>
+        <div class="mode-label">Phrase par phrase</div>
+        <div class="mode-desc">Une ligne = un sous-titre</div>
+      </div>
+      <div class="mode-option" data-mode="mot" onclick="selectMode(this)">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-label">Mot par mot</div>
+        <div class="mode-desc">Style TikTok viral</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="step-number">4</span> Style des sous-titres</div>
     <div class="style-grid">
       <div class="style-option active" data-style="white" onclick="selectStyle(this)">
         <div class="style-preview" style="color:#fff;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;">SOUS-TITRE</div>
@@ -142,7 +129,7 @@
 
   <div class="results" id="results">
     <div class="card">
-      <div class="card-title">Aperçu animé</div>
+      <div class="card-title">Aperçu animé <span class="mode-badge" id="modeBadge">Phrase par phrase</span></div>
       <div class="preview-box">
         <div class="preview-sub" id="previewSub">APERÇU DU TEXTE</div>
       </div>
@@ -166,14 +153,20 @@
 </div>
 
 <script>
-  let segments = [], selectedStyle = 'white', isPlaying = false;
-  let playInterval = null, currentTime = 0, totalDuration = 40;
+  let segments = [], selectedStyle = 'white', selectedMode = 'phrase';
+  let isPlaying = false, playInterval = null, currentTime = 0, totalDuration = 43;
 
   function selectStyle(el) {
     document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
     el.classList.add('active');
     selectedStyle = el.dataset.style;
     if (segments.length > 0) updatePreview(segments[0].text);
+  }
+
+  function selectMode(el) {
+    document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedMode = el.dataset.mode;
   }
 
   function applyStyle(sub) {
@@ -188,17 +181,39 @@
     sub.classList.remove('zoom-anim');
     sub.textContent = text.toUpperCase();
     applyStyle(sub);
-    void sub.offsetWidth; // force reflow
+    void sub.offsetWidth;
     sub.classList.add('zoom-anim');
   }
 
   function generate() {
     const raw = document.getElementById('scriptInput').value.trim();
-    totalDuration = parseFloat(document.getElementById('videoDuration').value) || 40;
+    totalDuration = parseFloat(document.getElementById('videoDuration').value) || 43;
     if (!raw) { alert('Veuillez coller votre script !'); return; }
+
     const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const timePerSeg = totalDuration / lines.length;
-    segments = lines.map((text, i) => ({ text, start: i * timePerSeg, end: (i+1)*timePerSeg, duration: timePerSeg }));
+    let tokens = [];
+
+    if (selectedMode === 'mot') {
+      // Mode mot par mot
+      lines.forEach(line => {
+        const words = line.split(' ').filter(w => w.length > 0);
+        words.forEach(word => tokens.push(word));
+      });
+      document.getElementById('modeBadge').textContent = 'Mot par mot';
+    } else {
+      // Mode phrase par phrase
+      tokens = lines;
+      document.getElementById('modeBadge').textContent = 'Phrase par phrase';
+    }
+
+    const timePerSeg = totalDuration / tokens.length;
+    segments = tokens.map((text, i) => ({
+      text,
+      start: i * timePerSeg,
+      end: (i + 1) * timePerSeg,
+      duration: timePerSeg
+    }));
+
     document.getElementById('subCount').textContent = segments.length;
     renderList();
     updatePreview(segments[0].text);
@@ -246,13 +261,13 @@
       const div = document.createElement('div');
       div.className = 'sub-item';
       div.innerHTML = `<div class="sub-time">${formatTime(seg.start)}<br>→ ${formatTime(seg.end)}</div>
-        <textarea class="sub-text-edit" rows="2" onfocus="updatePreview(this.value)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
-        <input class="sub-duration" type="number" value="${seg.duration.toFixed(1)}" min="0.5" step="0.5" onchange="updateDuration(${i},this.value)" />`;
+        <textarea class="sub-text-edit" rows="1" onfocus="updatePreview(this.value)" onchange="segments[${i}].text=this.value;rebuildTimings()">${seg.text}</textarea>
+        <input class="sub-duration" type="number" value="${seg.duration.toFixed(2)}" min="0.1" step="0.1" onchange="updateDuration(${i},this.value)" />`;
       list.appendChild(div);
     });
   }
 
-  function updateDuration(i, val) { segments[i].duration = parseFloat(val)||2; rebuildTimings(); }
+  function updateDuration(i, val) { segments[i].duration = parseFloat(val)||0.5; rebuildTimings(); }
 
   function rebuildTimings() {
     let c = segments[0].start;

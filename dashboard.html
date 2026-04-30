@@ -16,15 +16,16 @@
   .card-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #888; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
   .card-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
 
-  /* Objectifs */
   .objectives { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
   .objective-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
-  .obj-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-  .obj-platform { font-size: 13px; font-weight: 600; color: #f0f0f0; }
+  .obj-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .obj-platform { font-size: 13px; font-weight: 600; color: #f0f0f0; display: flex; align-items: center; gap: 8px; }
   .obj-icon { font-size: 20px; }
-  .obj-stats { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .auto-badge { font-size: 9px; background: rgba(0,200,100,0.15); color: #34d399; border: 1px solid rgba(0,200,100,0.3); padding: 2px 6px; border-radius: 10px; }
+  .manual-badge { font-size: 9px; background: rgba(255,165,0,0.15); color: #fbbf24; border: 1px solid rgba(255,165,0,0.3); padding: 2px 6px; border-radius: 10px; }
+  .obj-stats { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: flex-end; }
   .obj-current { font-family: 'Space Mono', monospace; font-size: 24px; font-weight: 700; color: #7c5cfc; }
-  .obj-goal { font-family: 'Space Mono', monospace; font-size: 14px; color: #555; align-self: flex-end; }
+  .obj-goal { font-family: 'Space Mono', monospace; font-size: 14px; color: #555; }
   .progress-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
   .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #7c5cfc, #4f8bff); transition: width 0.6s ease; }
   .progress-fill.tiktok { background: linear-gradient(90deg, #ff2d55, #ff6b6b); }
@@ -35,8 +36,22 @@
   .obj-input:focus { border-color: rgba(124,92,252,0.5); }
   .btn-update { padding: 8px 14px; background: rgba(124,92,252,0.15); border: 1px solid rgba(124,92,252,0.4); border-radius: 8px; color: #7c5cfc; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
   .btn-update:hover { background: rgba(124,92,252,0.25); }
+  .btn-refresh { padding: 8px 14px; background: rgba(0,200,100,0.1); border: 1px solid rgba(0,200,100,0.3); border-radius: 8px; color: #34d399; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .btn-refresh:hover { background: rgba(0,200,100,0.2); }
 
-  /* Vidéos */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; text-align: center; }
+  .stat-num { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: #7c5cfc; }
+  .stat-label { font-size: 11px; color: #555; margin-top: 3px; }
+
+  .yt-videos { display: flex; flex-direction: column; gap: 8px; }
+  .yt-video-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 12px 14px; display: grid; grid-template-columns: auto 1fr auto auto; gap: 12px; align-items: center; }
+  .yt-thumb { width: 60px; height: 34px; border-radius: 4px; object-fit: cover; background: #222; }
+  .yt-title { font-size: 13px; font-weight: 500; color: #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .yt-date { font-size: 11px; color: #555; margin-top: 2px; }
+  .yt-vues { font-family: 'Space Mono', monospace; font-size: 13px; color: #ff9060; font-weight: 700; }
+  .yt-likes { font-size: 11px; color: #555; }
+
   .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
   .form-group { display: flex; flex-direction: column; gap: 5px; }
   .form-group.full { grid-column: 1/-1; }
@@ -47,310 +62,327 @@
   .btn-add { width: 100%; padding: 12px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 10px; color: white; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
   .btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,92,252,0.3); }
 
-  /* Stats globales */
-  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  .stat-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; text-align: center; }
-  .stat-num { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: #7c5cfc; }
-  .stat-label { font-size: 11px; color: #555; margin-top: 3px; }
-
-  /* Liste vidéos */
   .videos-list { display: flex; flex-direction: column; gap: 8px; }
-  .video-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto auto auto auto; gap: 12px; align-items: center; transition: all 0.2s; }
-  .video-item:hover { border-color: rgba(255,255,255,0.15); }
-  .video-title { font-size: 14px; font-weight: 500; color: #f0f0f0; }
+  .video-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto auto auto auto; gap: 12px; align-items: center; }
+  .video-title { font-size: 13px; font-weight: 500; color: #f0f0f0; }
+  .video-sub { font-size: 11px; color: #555; margin-top: 2px; }
   .video-platform { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; }
   .platform-tiktok { background: rgba(255,45,85,0.15); color: #ff6b6b; border: 1px solid rgba(255,45,85,0.3); }
   .platform-youtube { background: rgba(255,80,0,0.15); color: #ff9060; border: 1px solid rgba(255,80,0,0.3); }
   .platform-les2 { background: rgba(124,92,252,0.15); color: #a78bfa; border: 1px solid rgba(124,92,252,0.3); }
   .video-vues { font-family: 'Space Mono', monospace; font-size: 13px; color: #7c5cfc; font-weight: 700; }
   .video-date { font-size: 11px; color: #444; }
-  .video-heure { font-size: 11px; color: #555; }
   .btn-delete-v { padding: 4px 8px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; color: #ef4444; font-size: 11px; cursor: pointer; }
-  .btn-delete-v:hover { background: rgba(239,68,68,0.15); }
-  .empty { text-align: center; padding: 30px; color: #555; font-size: 13px; }
 
-  /* Meilleure vidéo */
   .best-video { background: rgba(124,92,252,0.08); border: 1px solid rgba(124,92,252,0.2); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
   .best-label { font-size: 11px; color: #7c5cfc; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
   .best-title { font-size: 14px; font-weight: 500; color: #f0f0f0; }
   .best-vues { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #7c5cfc; }
 
-  /* Graphique simple */
   .chart { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin-top: 8px; }
   .bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
-  .bar { width: 100%; background: linear-gradient(180deg, #7c5cfc, #4f8bff); border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.4s ease; }
+  .bar { width: 100%; background: linear-gradient(180deg, #7c5cfc, #4f8bff); border-radius: 4px 4px 0 0; min-height: 4px; }
   .bar-label { font-size: 9px; color: #555; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .bar-val { font-size: 9px; color: #7c5cfc; font-family: 'Space Mono', monospace; }
 
+  .loading-yt { text-align: center; padding: 20px; color: #555; font-size: 13px; }
+  .error-yt { background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.2); border-radius: 10px; padding: 12px; font-size: 12px; color: #ff8080; margin-top: 8px; display: none; }
+  .api-key-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 9px 12px; color: #f0f0f0; font-family: 'Space Mono', monospace; font-size: 12px; outline: none; margin-bottom: 8px; }
+  .api-key-input:focus { border-color: rgba(124,92,252,0.5); }
+  .hint { font-size: 11px; color: #555; margin-top: 4px; }
+
   .filters { display: flex; gap: 8px; margin-bottom: 12px; }
-  .filter-btn { padding: 5px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: #888; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn { padding: 5px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: #888; font-size: 11px; cursor: pointer; }
   .filter-btn.active { background: rgba(124,92,252,0.15); border-color: rgba(124,92,252,0.4); color: #7c5cfc; }
+  .last-update { font-size: 11px; color: #444; margin-top: 8px; text-align: right; }
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="tag">Dashboard Creator · Pokémon</div>
+  <div class="tag">Dashboard Creator · Auto YouTube</div>
   <h1>Mon tableau de bord</h1>
-  <p class="subtitle">Suivez votre progression · Analysez vos performances · Atteignez vos objectifs</p>
+  <p class="subtitle">YouTube mis à jour automatiquement · TikTok manuel · Sauvegarde automatique</p>
 
   <!-- Objectifs -->
   <div class="objectives">
     <div class="objective-card">
       <div class="obj-header">
-        <div class="obj-icon">🎵</div>
-        <div class="obj-platform">TikTok</div>
+        <div class="obj-platform"><span class="obj-icon">🎵</span> TikTok</div>
+        <span class="manual-badge">Manuel</span>
       </div>
       <div class="obj-stats">
         <div class="obj-current" id="ttCurrent">5 543</div>
         <div class="obj-goal">/ 10 000</div>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill tiktok" id="ttBar" style="width:55.4%"></div>
-      </div>
+      <div class="progress-track"><div class="progress-fill tiktok" id="ttBar" style="width:55.4%"></div></div>
       <div class="obj-pct">
         <span id="ttPct">55.4%</span>
         <span class="obj-manque" id="ttManque">Il manque 4 457 abonnés</span>
       </div>
       <div class="obj-input-row">
-        <input class="obj-input" type="number" id="ttInput" placeholder="Nouveaux abonnés..." />
+        <input class="obj-input" type="number" id="ttInput" placeholder="Abonnés actuels..." />
         <button class="btn-update" onclick="updateTT()">Mettre à jour</button>
       </div>
     </div>
 
     <div class="objective-card">
       <div class="obj-header">
-        <div class="obj-icon">▶️</div>
-        <div class="obj-platform">YouTube</div>
+        <div class="obj-platform"><span class="obj-icon">▶️</span> YouTube</div>
+        <span class="auto-badge">Auto ✨</span>
       </div>
       <div class="obj-stats">
-        <div class="obj-current" id="ytCurrent">600</div>
+        <div class="obj-current" id="ytCurrent">—</div>
         <div class="obj-goal">/ 1 000</div>
       </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="ytBar" style="width:60%"></div>
-      </div>
+      <div class="progress-track"><div class="progress-fill" id="ytBar" style="width:0%"></div></div>
       <div class="obj-pct">
-        <span id="ytPct">60%</span>
-        <span class="obj-manque" id="ytManque">Il manque 400 abonnés</span>
+        <span id="ytPct">—</span>
+        <span class="obj-manque" id="ytManque">Chargement...</span>
       </div>
       <div class="obj-input-row">
-        <input class="obj-input" type="number" id="ytInput" placeholder="Nouveaux abonnés..." />
-        <button class="btn-update" onclick="updateYT()">Mettre à jour</button>
+        <button class="btn-refresh" onclick="fetchYouTube()" style="width:100%">🔄 Actualiser YouTube</button>
       </div>
+      <div class="last-update" id="lastUpdate"></div>
     </div>
+  </div>
+
+  <!-- Clé API -->
+  <div class="card" id="apiCard">
+    <div class="card-title">🔑 Clé API YouTube</div>
+    <input class="api-key-input" type="password" id="apiKeyInput" placeholder="Collez votre clé API YouTube ici..." />
+    <button class="btn-add" onclick="saveApiKey()">Sauvegarder la clé</button>
+    <p class="hint">Votre clé est stockée uniquement dans votre navigateur — elle ne sera jamais partagée.</p>
+    <div class="error-yt" id="errorYT"></div>
   </div>
 
   <!-- Stats globales -->
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-num" id="statVideos">0</div><div class="stat-label">Vidéos postées</div></div>
-    <div class="stat-card"><div class="stat-num" id="statVuesTotales">0</div><div class="stat-label">Vues totales</div></div>
+    <div class="stat-card"><div class="stat-num" id="statVideos">0</div><div class="stat-label">Vidéos TikTok</div></div>
+    <div class="stat-card"><div class="stat-num" id="statVuesTotales">0</div><div class="stat-label">Vues TikTok totales</div></div>
     <div class="stat-card"><div class="stat-num" id="statMoyenne">0</div><div class="stat-label">Moyenne / vidéo</div></div>
-    <div class="stat-card"><div class="stat-num" id="statMeilleure">0</div><div class="stat-label">Meilleure vidéo</div></div>
+    <div class="stat-card"><div class="stat-num" id="statYTViews">—</div><div class="stat-label">Vues YouTube totales</div></div>
   </div>
 
-  <!-- Meilleure vidéo -->
+  <!-- Meilleures vidéos -->
   <div class="best-video" id="bestVideoCard" style="display:none">
     <div>
-      <div class="best-label">🏆 Meilleure performance</div>
+      <div class="best-label">🏆 Meilleure vidéo TikTok</div>
       <div class="best-title" id="bestTitle">—</div>
     </div>
     <div class="best-vues" id="bestVues">0</div>
   </div>
 
-  <!-- Graphique -->
+  <!-- Graphique TikTok -->
   <div class="card" id="chartCard" style="display:none">
-    <div class="card-title">Performances des dernières vidéos</div>
+    <div class="card-title">Performances TikTok — dernières vidéos</div>
     <div class="chart" id="chart"></div>
   </div>
 
-  <!-- Ajouter une vidéo -->
+  <!-- Vidéos YouTube auto -->
+  <div class="card" id="ytVideosCard" style="display:none">
+    <div class="card-title">Dernières vidéos YouTube <span style="color:#34d399;font-size:10px;margin-left:4px;">● Auto</span></div>
+    <div class="yt-videos" id="ytVideosList"></div>
+  </div>
+
+  <!-- Ajouter vidéo TikTok -->
   <div class="card">
-    <div class="card-title">Ajouter une vidéo</div>
+    <div class="card-title">➕ Ajouter une vidéo TikTok</div>
     <div class="form-grid">
       <div class="form-group full">
         <label>Titre de la vidéo</label>
         <input type="text" id="newTitre" placeholder="Ex: Meilleure équipe Gruiki Noir & Blanc 2..." />
       </div>
       <div class="form-group">
-        <label>Plateforme</label>
-        <select id="newPlatform">
-          <option value="tiktok">TikTok</option>
-          <option value="youtube">YouTube Shorts</option>
-          <option value="les2">Les deux</option>
-        </select>
-      </div>
-      <div class="form-group">
         <label>Vues TikTok</label>
         <input type="number" id="newVuesTT" placeholder="0" min="0" />
-      </div>
-      <div class="form-group">
-        <label>Vues YouTube</label>
-        <input type="number" id="newVuesYT" placeholder="0" min="0" />
-      </div>
-      <div class="form-group">
-        <label>Heure de publication</label>
-        <input type="text" id="newHeure" placeholder="Ex: 21h00" />
       </div>
       <div class="form-group">
         <label>Likes</label>
         <input type="number" id="newLikes" placeholder="0" min="0" />
       </div>
       <div class="form-group">
-        <label>Commentaires</label>
-        <input type="number" id="newComments" placeholder="0" min="0" />
+        <label>Heure de publication</label>
+        <input type="text" id="newHeure" placeholder="Ex: 21h00" />
       </div>
     </div>
     <button class="btn-add" onclick="addVideo()">+ Ajouter la vidéo</button>
   </div>
 
-  <!-- Liste des vidéos -->
+  <!-- Historique TikTok -->
   <div class="card">
-    <div class="card-title">Historique des vidéos</div>
-    <div class="filters">
-      <button class="filter-btn active" onclick="setFilter('all', this)">Toutes</button>
-      <button class="filter-btn" onclick="setFilter('tiktok', this)">TikTok</button>
-      <button class="filter-btn" onclick="setFilter('youtube', this)">YouTube</button>
-      <button class="filter-btn" onclick="setFilter('les2', this)">Les deux</button>
-    </div>
+    <div class="card-title">Historique TikTok</div>
     <div class="videos-list" id="videosList">
-      <div class="empty">Aucune vidéo ajoutée — commencez par ajouter vos vidéos !</div>
+      <div class="loading-yt">Aucune vidéo ajoutée — commencez par en ajouter une !</div>
     </div>
   </div>
 </div>
 
 <script>
-  let data = JSON.parse(localStorage.getItem('creator_dashboard') || '{"tt":5543,"yt":600,"videos":[]}');
-  let currentFilter = 'all';
+  const CHANNEL_ID = 'UCi7CC4NYUEm7zPwCodOsy2w';
+  let data = JSON.parse(localStorage.getItem('creator_dashboard_v2') || '{"tt":5543,"videos":[]}');
+  let apiKey = localStorage.getItem('yt_api_key') || '';
 
-  function save() { localStorage.setItem('creator_dashboard', JSON.stringify(data)); }
+  function save() { localStorage.setItem('creator_dashboard_v2', JSON.stringify(data)); }
+
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) { alert('Entrez votre clé API !'); return; }
+    apiKey = key;
+    localStorage.setItem('yt_api_key', key);
+    document.getElementById('apiCard').style.display = 'none';
+    fetchYouTube();
+  }
 
   function updateTT() {
     const val = parseInt(document.getElementById('ttInput').value);
     if (!val || val < 0) return;
     data.tt = val;
     document.getElementById('ttInput').value = '';
-    save(); renderObjectives();
+    save(); renderTT();
   }
 
-  function updateYT() {
-    const val = parseInt(document.getElementById('ytInput').value);
-    if (!val || val < 0) return;
-    data.yt = val;
-    document.getElementById('ytInput').value = '';
-    save(); renderObjectives();
-  }
-
-  function renderObjectives() {
-    const ttPct = Math.min((data.tt / 10000) * 100, 100);
-    const ytPct = Math.min((data.yt / 1000) * 100, 100);
-
+  function renderTT() {
+    const pct = Math.min((data.tt / 10000) * 100, 100);
     document.getElementById('ttCurrent').textContent = data.tt.toLocaleString('fr-FR');
-    document.getElementById('ttBar').style.width = ttPct + '%';
-    document.getElementById('ttPct').textContent = ttPct.toFixed(1) + '%';
+    document.getElementById('ttBar').style.width = pct + '%';
+    document.getElementById('ttPct').textContent = pct.toFixed(1) + '%';
     document.getElementById('ttManque').textContent = data.tt >= 10000 ? '🎉 Objectif atteint !' : `Il manque ${(10000 - data.tt).toLocaleString('fr-FR')} abonnés`;
+  }
 
-    document.getElementById('ytCurrent').textContent = data.yt.toLocaleString('fr-FR');
-    document.getElementById('ytBar').style.width = ytPct + '%';
-    document.getElementById('ytPct').textContent = ytPct.toFixed(1) + '%';
-    document.getElementById('ytManque').textContent = data.yt >= 1000 ? '🎉 Objectif atteint !' : `Il manque ${(1000 - data.yt).toLocaleString('fr-FR')} abonnés`;
+  async function fetchYouTube() {
+    if (!apiKey) { document.getElementById('apiCard').style.display = 'block'; return; }
+    document.getElementById('ytManque').textContent = 'Chargement...';
+
+    try {
+      // Abonnés et stats chaîne
+      const chRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${apiKey}`);
+      const chData = await chRes.json();
+
+      if (chData.error) throw new Error(chData.error.message);
+
+      const stats = chData.items[0].statistics;
+      const subs = parseInt(stats.subscriberCount);
+      const totalViews = parseInt(stats.viewCount);
+
+      const pct = Math.min((subs / 1000) * 100, 100);
+      document.getElementById('ytCurrent').textContent = subs.toLocaleString('fr-FR');
+      document.getElementById('ytBar').style.width = pct + '%';
+      document.getElementById('ytPct').textContent = pct.toFixed(1) + '%';
+      document.getElementById('ytManque').textContent = subs >= 1000 ? '🎉 Objectif atteint !' : `Il manque ${(1000 - subs).toLocaleString('fr-FR')} abonnés`;
+      document.getElementById('statYTViews').textContent = totalViews >= 1000 ? (totalViews/1000).toFixed(1)+'k' : totalViews;
+      document.getElementById('lastUpdate').textContent = 'Mis à jour à ' + new Date().toLocaleTimeString('fr-FR');
+
+      // Dernières vidéos YouTube
+      const vRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=6&order=date&type=video&key=${apiKey}`);
+      const vData = await vRes.json();
+
+      if (vData.items && vData.items.length > 0) {
+        const videoIds = vData.items.map(v => v.id.videoId).join(',');
+        const statsRes = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoIds}&key=${apiKey}`);
+        const statsData = await statsRes.json();
+
+        const ytList = document.getElementById('ytVideosList');
+        ytList.innerHTML = vData.items.map((v, i) => {
+          const vStats = statsData.items[i]?.statistics || {};
+          const views = parseInt(vStats.viewCount || 0);
+          const likes = parseInt(vStats.likeCount || 0);
+          const date = new Date(v.snippet.publishedAt).toLocaleDateString('fr-FR');
+          return `
+            <div class="yt-video-item">
+              <img class="yt-thumb" src="${v.snippet.thumbnails.default.url}" alt="" />
+              <div>
+                <div class="yt-title">${v.snippet.title}</div>
+                <div class="yt-date">${date}</div>
+              </div>
+              <div class="yt-vues">${views.toLocaleString('fr-FR')} vues</div>
+              <div class="yt-likes">❤️ ${likes.toLocaleString('fr-FR')}</div>
+            </div>
+          `;
+        }).join('');
+        document.getElementById('ytVideosCard').style.display = 'block';
+      }
+
+      document.getElementById('errorYT').style.display = 'none';
+
+    } catch(err) {
+      const el = document.getElementById('errorYT');
+      el.textContent = '❌ Erreur : ' + err.message;
+      el.style.display = 'block';
+      document.getElementById('ytManque').textContent = 'Erreur de chargement';
+    }
   }
 
   function addVideo() {
     const titre = document.getElementById('newTitre').value.trim();
     if (!titre) { alert('Ajoutez un titre !'); return; }
-    const vuesTT = parseInt(document.getElementById('newVuesTT').value) || 0;
-    const vuesYT = parseInt(document.getElementById('newVuesYT').value) || 0;
     data.videos.unshift({
       id: Date.now(),
       titre,
-      platform: document.getElementById('newPlatform').value,
-      vuesTT,
-      vuesYT,
-      vuesTotal: vuesTT + vuesYT,
-      heure: document.getElementById('newHeure').value.trim(),
+      vues: parseInt(document.getElementById('newVuesTT').value) || 0,
       likes: parseInt(document.getElementById('newLikes').value) || 0,
-      comments: parseInt(document.getElementById('newComments').value) || 0,
+      heure: document.getElementById('newHeure').value.trim(),
       date: new Date().toLocaleDateString('fr-FR')
     });
-    ['newTitre','newVuesTT','newVuesYT','newHeure','newLikes','newComments'].forEach(id => document.getElementById(id).value = '');
-    save(); render();
+    ['newTitre','newVuesTT','newLikes','newHeure'].forEach(id => document.getElementById(id).value = '');
+    save(); renderTikTok();
   }
 
   function deleteVideo(id) {
     if (!confirm('Supprimer cette vidéo ?')) return;
     data.videos = data.videos.filter(v => v.id !== id);
-    save(); render();
+    save(); renderTikTok();
   }
 
-  function setFilter(f, btn) {
-    currentFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderList();
-  }
-
-  function render() {
-    renderObjectives();
-    renderStats();
-    renderList();
-    renderChart();
-  }
-
-  function renderStats() {
-    const total = data.videos.reduce((s, v) => s + v.vuesTotal, 0);
-    const best = data.videos.reduce((b, v) => v.vuesTotal > b ? v.vuesTotal : b, 0);
+  function renderTikTok() {
+    const total = data.videos.reduce((s, v) => s + v.vues, 0);
+    const best = data.videos.reduce((b, v) => v.vues > (b?.vues || 0) ? v : b, null);
     const moyenne = data.videos.length > 0 ? Math.round(total / data.videos.length) : 0;
 
     document.getElementById('statVideos').textContent = data.videos.length;
     document.getElementById('statVuesTotales').textContent = total.toLocaleString('fr-FR');
     document.getElementById('statMoyenne').textContent = moyenne.toLocaleString('fr-FR');
-    document.getElementById('statMeilleure').textContent = best.toLocaleString('fr-FR');
 
-    const bestVideo = data.videos.reduce((b, v) => v.vuesTotal > (b?.vuesTotal || 0) ? v : b, null);
-    if (bestVideo) {
+    if (best) {
       document.getElementById('bestVideoCard').style.display = 'flex';
-      document.getElementById('bestTitle').textContent = bestVideo.titre;
-      document.getElementById('bestVues').textContent = bestVideo.vuesTotal.toLocaleString('fr-FR') + ' vues';
+      document.getElementById('bestTitle').textContent = best.titre;
+      document.getElementById('bestVues').textContent = best.vues.toLocaleString('fr-FR') + ' vues';
     }
-  }
 
-  function renderList() {
-    const filtered = currentFilter === 'all' ? data.videos : data.videos.filter(v => v.platform === currentFilter);
     const list = document.getElementById('videosList');
-    if (filtered.length === 0) { list.innerHTML = '<div class="empty">Aucune vidéo dans cette catégorie.</div>'; return; }
-
-    const platformLabel = { tiktok: 'TikTok', youtube: 'YouTube', les2: 'TikTok + YT' };
-    const platformClass = { tiktok: 'platform-tiktok', youtube: 'platform-youtube', les2: 'platform-les2' };
-
-    list.innerHTML = filtered.map(v => `
+    if (data.videos.length === 0) { list.innerHTML = '<div class="loading-yt">Aucune vidéo TikTok ajoutée.</div>'; return; }
+    list.innerHTML = data.videos.map(v => `
       <div class="video-item">
         <div>
           <div class="video-title">${v.titre}</div>
-          <div style="font-size:11px;color:#555;margin-top:3px;">❤️ ${v.likes} · 💬 ${v.comments} ${v.heure ? '· 🕐 ' + v.heure : ''}</div>
+          <div class="video-sub">❤️ ${v.likes} ${v.heure ? '· 🕐 ' + v.heure : ''}</div>
         </div>
-        <span class="video-platform ${platformClass[v.platform]}">${platformLabel[v.platform]}</span>
-        <div class="video-vues">${v.vuesTotal.toLocaleString('fr-FR')} vues</div>
+        <span class="video-platform platform-tiktok">TikTok</span>
+        <div class="video-vues">${v.vues.toLocaleString('fr-FR')} vues</div>
         <div class="video-date">${v.date}</div>
         <button class="btn-delete-v" onclick="deleteVideo(${v.id})">🗑️</button>
       </div>
     `).join('');
-  }
 
-  function renderChart() {
+    // Graphique
     const last8 = [...data.videos].slice(0, 8).reverse();
-    if (last8.length === 0) return;
-    document.getElementById('chartCard').style.display = 'block';
-    const max = Math.max(...last8.map(v => v.vuesTotal));
-    document.getElementById('chart').innerHTML = last8.map(v => `
-      <div class="bar-wrap">
-        <div class="bar-val">${v.vuesTotal >= 1000 ? (v.vuesTotal/1000).toFixed(1)+'k' : v.vuesTotal}</div>
-        <div class="bar" style="height:${max > 0 ? (v.vuesTotal/max)*60 : 4}px"></div>
-        <div class="bar-label">${v.titre.split(' ').slice(0,2).join(' ')}</div>
-      </div>
-    `).join('');
+    if (last8.length > 0) {
+      document.getElementById('chartCard').style.display = 'block';
+      const max = Math.max(...last8.map(v => v.vues));
+      document.getElementById('chart').innerHTML = last8.map(v => `
+        <div class="bar-wrap">
+          <div class="bar-val">${v.vues >= 1000 ? (v.vues/1000).toFixed(1)+'k' : v.vues}</div>
+          <div class="bar" style="height:${max > 0 ? (v.vues/max)*60 : 4}px"></div>
+          <div class="bar-label">${v.titre.split(' ').slice(0,2).join(' ')}</div>
+        </div>
+      `).join('');
+    }
   }
 
-  render();
+  // Init
+  if (apiKey) document.getElementById('apiCard').style.display = 'none';
+  renderTT();
+  renderTikTok();
+  if (apiKey) fetchYouTube();AIzaSyAdkkRkGwqP-AUWHx02uHnSsAF699LQgac
 </script>
 </body>
 </html>

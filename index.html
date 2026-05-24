@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Générateur de sous-titres</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&family=Anton&family=Oswald:wght@700&family=Bangers&family=Black+Han+Sans&family=Permanent+Marker&family=Russo+One&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Outfit', sans-serif; background: #0a0a0f; color: #f0f0f0; min-height: 100vh; padding: 24px; background-image: radial-gradient(ellipse at 20% 20%, rgba(99,60,180,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(30,120,255,0.08) 0%, transparent 60%); }
@@ -23,8 +23,44 @@
   .duration-row input[type="number"] { width: 80px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 12px; color: #f0f0f0; font-family: 'Space Mono', monospace; font-size: 13px; outline: none; text-align: center; }
   .duration-label { font-size: 13px; color: #888; }
 
-  /* Mode selector */
-  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0; }
+  /* ── Tabs mode ── */
+  .input-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .input-tab { flex: 1; padding: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; cursor: pointer; text-align: center; font-size: 13px; font-weight: 500; color: #666; transition: all 0.2s; }
+  .input-tab.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); color: #f0f0f0; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Upload zone ── */
+  .upload-zone { border: 2px dashed rgba(124,92,252,0.3); border-radius: 12px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: rgba(124,92,252,0.7); background: rgba(124,92,252,0.06); }
+  .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 32px; margin-bottom: 10px; }
+  .upload-title { font-size: 15px; font-weight: 500; color: #f0f0f0; margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: #555; }
+
+  .file-selected { display: none; align-items: center; gap: 12px; background: rgba(124,92,252,0.08); border: 1px solid rgba(124,92,252,0.3); border-radius: 10px; padding: 12px 16px; margin-top: 12px; }
+  .file-selected-icon { font-size: 22px; }
+  .file-selected-name { font-size: 13px; font-weight: 500; color: #f0f0f0; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-selected-remove { font-size: 18px; cursor: pointer; color: #555; transition: color 0.15s; }
+  .file-selected-remove:hover { color: #f0f0f0; }
+
+  /* ── API key input ── */
+  .api-key-row { display: flex; gap: 10px; align-items: center; margin-top: 14px; }
+  .api-key-row input[type="text"], .api-key-row input[type="password"] { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 9px 12px; color: #f0f0f0; font-family: 'Space Mono', monospace; font-size: 12px; outline: none; }
+  .api-key-row input:focus { border-color: rgba(124,92,252,0.5); }
+  .btn-eye { background: none; border: none; cursor: pointer; color: #555; font-size: 16px; padding: 0 4px; }
+
+  /* ── Transcription status ── */
+  .transcription-status { display: none; align-items: center; gap: 12px; background: rgba(124,92,252,0.06); border: 1px solid rgba(124,92,252,0.2); border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(124,92,252,0.2); border-top-color: #7c5cfc; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ts-text { font-size: 13px; color: #888; }
+  .ts-text strong { color: #7c5cfc; }
+
+  .transcription-error { display: none; background: rgba(255,80,80,0.08); border: 1px solid rgba(255,80,80,0.25); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #ff6060; margin-top: 12px; line-height: 1.5; }
+
+  /* ── Mode selector ── */
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .mode-option { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; text-align: center; }
   .mode-option.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); }
   .mode-icon { font-size: 22px; margin-bottom: 6px; }
@@ -38,6 +74,9 @@
   .style-label { font-size: 11px; color: #666; }
   .btn-main { width: 100%; padding: 14px; background: linear-gradient(135deg, #7c5cfc, #4f8bff); border: none; border-radius: 12px; color: white; font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
   .btn-main:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,92,252,0.3); }
+  .btn-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── Results ── */
   .results { display: none; }
   .preview-box { background: #111; border-radius: 10px; padding: 30px 20px; text-align: center; margin-bottom: 16px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
   .preview-sub { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.04em; line-height: 1.2; text-transform: uppercase; display: inline-block; }
@@ -65,21 +104,156 @@
   .list-header { display: grid; grid-template-columns: 110px 1fr 80px; gap: 8px; padding: 0 0 8px; font-size: 10px; color: #555; letter-spacing: 0.06em; text-transform: uppercase; }
   .success-msg { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #00ff88; margin-top: 12px; display: none; }
   .mode-badge { display: inline-block; font-size: 10px; font-weight: 600; background: rgba(124,92,252,0.15); color: #7c5cfc; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
+  .whisper-badge { display: inline-block; font-size: 10px; font-weight: 600; background: rgba(0,255,136,0.1); color: #00cc70; padding: 2px 8px; border-radius: 20px; margin-left: 4px; border: 1px solid rgba(0,255,136,0.2); }
+
+  /* Grouping options for Whisper mode */
+  .group-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .group-option { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .group-option.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); }
+  .group-label { font-size: 12px; font-weight: 500; color: #f0f0f0; margin-bottom: 2px; }
+  .group-desc { font-size: 10px; color: #666; }
+  .group-options-wrap { display: none; margin-top: 14px; }
+  .group-options-wrap.visible { display: block; }
+  .group-options-title { font-size: 11px; color: #555; margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  /* section hidden by default for non-whisper mode */
+  .duration-card { }
+  .duration-card.hidden { display: none; }
+
+  /* ── Font & size picker ── */
+  .font-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .font-option { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 8px; cursor: pointer; transition: all 0.2s; text-align: center; }
+  .font-option.active { border-color: rgba(124,92,252,0.5); background: rgba(124,92,252,0.08); }
+  .font-preview { font-size: 18px; color: #f0f0f0; margin-bottom: 3px; line-height: 1.1; }
+  .font-name { font-size: 10px; color: #555; }
+  .size-row { display: flex; gap: 14px; align-items: center; }
+  .size-label { font-size: 12px; color: #666; white-space: nowrap; }
+  .size-slider { flex: 1; accent-color: #7c5cfc; height: 4px; cursor: pointer; }
+  .size-value { font-family: 'Space Mono', monospace; font-size: 12px; color: #7c5cfc; min-width: 38px; text-align: right; }
+  .section-sep { font-size: 10px; color: #444; letter-spacing: 0.08em; text-transform: uppercase; margin: 14px 0 10px; }
 </style>
 </head>
 <body>
 <div class="app">
   <div class="tag">100% Gratuit · Sans filigrane · Zoom Dézoom</div>
   <h1>Générateur de sous-titres</h1>
-  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · Phrase par phrase ou Mot par mot · Export SRT</p>
+  <p style="font-size:13px;color:#555;margin-bottom:24px;">Police Bebas Neue · IA Whisper · Synchronisation automatique · Export SRT</p>
 
+  <!-- ÉTAPE 1 : Source -->
   <div class="card">
-    <div class="card-title"><span class="step-number">1</span> Collez votre script</div>
-    <textarea id="scriptInput" rows="8" placeholder="Collez ici le texte de votre voix off, une phrase par ligne..."></textarea>
-    <p class="hint">Mettez <span>une phrase par ligne</span> — chaque ligne deviendra un sous-titre.</p>
+    <div class="card-title"><span class="step-number">1</span> Source du texte</div>
+    <div class="input-tabs">
+      <div class="input-tab active" data-tab="script" onclick="switchTab(this)">✍️ Script manuel</div>
+      <div class="input-tab" data-tab="whisper" onclick="switchTab(this)">🎙️ Analyser ma voix</div>
+      <div class="input-tab" data-tab="align" onclick="switchTab(this)">✨ Script + Voix</div>
+    </div>
+
+    <!-- Tab script -->
+    <div class="tab-panel active" id="tab-script">
+      <textarea id="scriptInput" rows="8" placeholder="Collez ici le texte de votre voix off, une phrase par ligne..."></textarea>
+      <p class="hint">Mettez <span>une phrase par ligne</span> — chaque ligne deviendra un sous-titre.</p>
+    </div>
+
+    <!-- Tab Whisper -->
+    <div class="tab-panel" id="tab-whisper">
+      <div class="upload-zone" id="uploadZone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <input type="file" id="audioFile" accept="audio/*,video/*" onchange="onFileSelect(event)" />
+        <div class="upload-icon">🎬</div>
+        <div class="upload-title">Glisse ta vidéo ou audio ici</div>
+        <div class="upload-sub">MP4, MOV, MP3, WAV, M4A, WebM · max 25 Mo</div>
+      </div>
+      <div class="file-selected" id="fileSelected">
+        <div class="file-selected-icon">🎵</div>
+        <div class="file-selected-name" id="fileName">—</div>
+        <div class="file-selected-remove" onclick="removeFile()">✕</div>
+      </div>
+
+      <div class="api-key-row">
+        <input type="password" id="apiKey" placeholder="Clé API OpenAI  sk-…" autocomplete="off" />
+        <button class="btn-eye" onclick="toggleKey()" title="Afficher/masquer">👁</button>
+      </div>
+      <p class="hint" style="margin-top:8px;">Ta clé reste <span>uniquement dans ton navigateur</span> — jamais envoyée ailleurs qu'à OpenAI. <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#7c5cfc;">Obtenir une clé →</a></p>
+
+      <div class="transcription-status" id="transcriptionStatus">
+        <div class="spinner"></div>
+        <div class="ts-text" id="tsText">Envoi à <strong>Whisper</strong>…</div>
+      </div>
+      <div class="transcription-error" id="transcriptionError"></div>
+
+      <!-- Grouping options (only in whisper mode) -->
+      <div class="group-options-wrap" id="groupOptionsWrap">
+        <div class="group-options-title">Regroupement des mots</div>
+        <div class="group-grid">
+          <div class="group-option active" data-group="1" onclick="selectGroup(this)">
+            <div class="group-label">Mot par mot</div>
+            <div class="group-desc">Style TikTok</div>
+          </div>
+          <div class="group-option" data-group="2" onclick="selectGroup(this)">
+            <div class="group-label">2 mots</div>
+            <div class="group-desc">Équilibré</div>
+          </div>
+          <div class="group-option" data-group="3" onclick="selectGroup(this)">
+            <div class="group-label">3 mots</div>
+            <div class="group-desc">Plus calme</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Script + Voix -->
+    <div class="tab-panel" id="tab-align">
+      <p class="hint" style="margin-bottom:14px;font-size:12px;line-height:1.7;">
+        <span>Comment ça marche :</span> Whisper détecte les timings de ta voix mot par mot. Ton script fournit les mots corrects. On aligne les deux — zéro faute d'orthographe, timings parfaits.
+      </p>
+      <textarea id="alignScript" rows="6" placeholder="Colle ici ton script exact, sans retours à la ligne forcés...&#10;&#10;Exemple : Aujourd'hui je vous parle de quelque chose d'incroyable qui va changer votre façon de voir les choses."></textarea>
+      <p class="hint" style="margin-top:6px;">Écris ton texte <span>tel que tu le prononces</span> — un seul bloc, pas besoin de couper par ligne.</p>
+
+      <div style="margin-top:14px;">
+        <div class="upload-zone" id="uploadZoneAlign" ondragover="onDragOverAlign(event)" ondragleave="onDragLeaveAlign(event)" ondrop="onDropAlign(event)">
+          <input type="file" id="audioFileAlign" accept="audio/*,video/*" onchange="onFileSelectAlign(event)" />
+          <div class="upload-icon">🎬</div>
+          <div class="upload-title">Glisse ta vidéo ou audio ici</div>
+          <div class="upload-sub">MP4, MOV, MP3, WAV, M4A, WebM · max 25 Mo</div>
+        </div>
+        <div class="file-selected" id="fileSelectedAlign">
+          <div class="file-selected-icon">🎵</div>
+          <div class="file-selected-name" id="fileNameAlign">—</div>
+          <div class="file-selected-remove" onclick="removeFileAlign()">✕</div>
+        </div>
+      </div>
+
+      <div class="api-key-row" style="margin-top:14px;">
+        <input type="password" id="apiKeyAlign" placeholder="Clé API OpenAI  sk-…" autocomplete="off" />
+        <button class="btn-eye" onclick="toggleKeyAlign()" title="Afficher/masquer">👁</button>
+      </div>
+      <p class="hint" style="margin-top:8px;">Ta clé reste <span>uniquement dans ton navigateur</span>. <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#7c5cfc;">Obtenir une clé →</a></p>
+
+      <div class="transcription-status" id="transcriptionStatusAlign">
+        <div class="spinner"></div>
+        <div class="ts-text" id="tsTextAlign">Alignement en cours…</div>
+      </div>
+      <div class="transcription-error" id="transcriptionErrorAlign"></div>
+
+      <div class="group-options-wrap" id="groupOptionsWrapAlign">
+        <div class="group-options-title">Regroupement des mots</div>
+        <div class="group-grid">
+          <div class="group-option active" data-group="1" onclick="selectGroupAlign(this)">
+            <div class="group-label">Mot par mot</div>
+            <div class="group-desc">Style TikTok</div>
+          </div>
+          <div class="group-option" data-group="2" onclick="selectGroupAlign(this)">
+            <div class="group-label">2 mots</div>
+            <div class="group-desc">Équilibré</div>
+          </div>
+          <div class="group-option" data-group="3" onclick="selectGroupAlign(this)">
+            <div class="group-label">3 mots</div>
+            <div class="group-desc">Plus calme</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="card">
+  <div class="card duration-card" id="durationCard">
     <div class="card-title"><span class="step-number">2</span> Durée de la vidéo</div>
     <div class="duration-row">
       <input type="number" id="videoDuration" value="43" min="1" max="600" />
@@ -87,7 +261,8 @@
     </div>
   </div>
 
-  <div class="card">
+  <!-- ÉTAPE 3 : Mode découpage (masqué en mode Whisper) -->
+  <div class="card" id="modeCard">
     <div class="card-title"><span class="step-number">3</span> Mode de découpage</div>
     <div class="mode-grid">
       <div class="mode-option active" data-mode="phrase" onclick="selectMode(this)">
@@ -103,16 +278,27 @@
     </div>
   </div>
 
+  <!-- ÉTAPE 4 : Style -->
   <div class="card">
-    <div class="card-title"><span class="step-number">4</span> Style des sous-titres</div>
+    <div class="card-title"><span class="step-number" id="styleStep">4</span> Style des sous-titres</div>
+
+    <div class="section-sep">Couleur & contour</div>
     <div class="style-grid">
-      <div class="style-option active" data-style="white" onclick="selectStyle(this)">
+      <div class="style-option" data-style="white" onclick="selectStyle(this)">
         <div class="style-preview" style="color:#fff;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;">SOUS-TITRE</div>
-        <div class="style-label">Blanc · contour noir ✓</div>
+        <div class="style-label">Blanc · ombre noire</div>
+      </div>
+      <div class="style-option active" data-style="stroke" onclick="selectStyle(this)">
+        <div class="style-preview" style="color:#fff;-webkit-text-stroke:2px #000;paint-order:stroke fill;">SOUS-TITRE</div>
+        <div class="style-label">Blanc · contour net ✓</div>
+      </div>
+      <div class="style-option" data-style="stroke-yellow" onclick="selectStyle(this)">
+        <div class="style-preview" style="color:#FFE500;-webkit-text-stroke:2px #000;paint-order:stroke fill;">SOUS-TITRE</div>
+        <div class="style-label">Jaune · contour net</div>
       </div>
       <div class="style-option" data-style="yellow" onclick="selectStyle(this)">
         <div class="style-preview" style="color:#FFE500;text-shadow:-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000;">SOUS-TITRE</div>
-        <div class="style-label">Jaune · contour noir</div>
+        <div class="style-label">Jaune · ombre noire</div>
       </div>
       <div class="style-option" data-style="tiktok" onclick="selectStyle(this)">
         <div class="style-preview" style="color:#fff;background:#000;padding:2px 10px;border-radius:4px;">SOUS-TITRE</div>
@@ -123,13 +309,59 @@
         <div class="style-label">Vert néon</div>
       </div>
     </div>
+
+    <div id="strokeThicknessWrap" style="margin-top:14px;display:none;">
+      <div class="section-sep">Épaisseur du contour</div>
+      <div class="size-row">
+        <span class="size-label">Fin</span>
+        <input type="range" class="size-slider" id="strokeSlider" min="1" max="6" value="2" step="1" oninput="onStrokeChange(this.value)" />
+        <span class="size-label">Épais</span>
+        <span class="size-value" id="strokeValue">2px</span>
+      </div>
+    </div>
+
+    <div class="section-sep">Police</div>
+    <div class="font-grid">
+      <div class="font-option active" data-font="Bebas Neue" onclick="selectFont(this)">
+        <div class="font-preview" style="font-family:'Bebas Neue'">BEBAS</div>
+        <div class="font-name">Bebas Neue</div>
+      </div>
+      <div class="font-option" data-font="Anton" onclick="selectFont(this)">
+        <div class="font-preview" style="font-family:'Anton'">ANTON</div>
+        <div class="font-name">Anton</div>
+      </div>
+      <div class="font-option" data-font="Oswald" onclick="selectFont(this)">
+        <div class="font-preview" style="font-family:'Oswald';font-weight:700">OSWALD</div>
+        <div class="font-name">Oswald</div>
+      </div>
+      <div class="font-option" data-font="Bangers" onclick="selectFont(this)">
+        <div class="font-preview" style="font-family:'Bangers'">BANGERS</div>
+        <div class="font-name">Bangers</div>
+      </div>
+      <div class="font-option" data-font="Russo One" onclick="selectFont(this)">
+        <div class="font-preview" style="font-family:'Russo One'">RUSSO</div>
+        <div class="font-name">Russo One</div>
+      </div>
+      <div class="font-option" data-font="Permanent Marker" onclick="selectFont(this)">
+        <div class="font-preview" style="font-family:'Permanent Marker';font-size:15px">Marker</div>
+        <div class="font-name">Permanent Marker</div>
+      </div>
+    </div>
+
+    <div class="section-sep">Taille</div>
+    <div class="size-row">
+      <span class="size-label">Petit</span>
+      <input type="range" class="size-slider" id="sizeSlider" min="16" max="60" value="28" oninput="onSizeChange(this.value)" />
+      <span class="size-label">Grand</span>
+      <span class="size-value" id="sizeValue">28px</span>
+    </div>
   </div>
 
-  <button class="btn-main" onclick="generate()">🎬 Générer les sous-titres</button>
+  <button class="btn-main" id="btnGenerate" onclick="generate()">🎬 Générer les sous-titres</button>
 
   <div class="results" id="results">
     <div class="card">
-      <div class="card-title">Aperçu animé <span class="mode-badge" id="modeBadge">Phrase par phrase</span></div>
+      <div class="card-title">Aperçu animé <span class="mode-badge" id="modeBadge">Phrase par phrase</span><span class="whisper-badge" id="whisperBadge" style="display:none;">✨ Whisper</span></div>
       <div class="preview-box">
         <div class="preview-sub" id="previewSub">APERÇU DU TEXTE</div>
       </div>
@@ -155,11 +387,235 @@
 <script>
   let segments = [], selectedStyle = 'white', selectedMode = 'phrase';
   let isPlaying = false, playInterval = null, currentTime = 0, totalDuration = 43;
+  let currentTab = 'script';
+  let selectedFile = null;
+  let whisperWords = null;
+  let selectedGroup = 1;
+  let selectedFont = 'Bebas Neue';
+  let selectedSize = 28;
+  let selectedStroke = 2;
 
+  // ── Tab switching ──
+  function switchTab(el) {
+    document.querySelectorAll('.input-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    currentTab = el.dataset.tab;
+    document.getElementById('tab-' + currentTab).classList.add('active');
+
+    const isManual = currentTab === 'script';
+    document.getElementById('durationCard').classList.toggle('hidden', !isManual);
+    document.getElementById('modeCard').classList.toggle('hidden', !isManual);
+    document.getElementById('styleStep').textContent = isManual ? '4' : '2';
+    document.getElementById('groupOptionsWrap').classList.toggle('visible', currentTab === 'whisper' && whisperWords !== null);
+  }
+
+  // ── Align tab file handling ──
+  let selectedFileAlign = null;
+  let alignWords = null;
+  let selectedGroupAlign = 1;
+
+  function onFileSelectAlign(e) { setFileAlign(e.target.files[0]); }
+  function onDragOverAlign(e) { e.preventDefault(); document.getElementById('uploadZoneAlign').classList.add('drag-over'); }
+  function onDragLeaveAlign() { document.getElementById('uploadZoneAlign').classList.remove('drag-over'); }
+  function onDropAlign(e) {
+    e.preventDefault();
+    document.getElementById('uploadZoneAlign').classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) setFileAlign(f);
+  }
+  function setFileAlign(f) {
+    if (!f) return;
+    selectedFileAlign = f;
+    document.getElementById('fileNameAlign').textContent = f.name;
+    document.getElementById('fileSelectedAlign').style.display = 'flex';
+    document.getElementById('transcriptionErrorAlign').style.display = 'none';
+    alignWords = null;
+    document.getElementById('groupOptionsWrapAlign').classList.remove('visible');
+  }
+  function removeFileAlign() {
+    selectedFileAlign = null;
+    document.getElementById('audioFileAlign').value = '';
+    document.getElementById('fileSelectedAlign').style.display = 'none';
+    document.getElementById('groupOptionsWrapAlign').classList.remove('visible');
+    alignWords = null;
+  }
+  function toggleKeyAlign() {
+    const inp = document.getElementById('apiKeyAlign');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+  function selectGroupAlign(el) {
+    document.querySelectorAll('#groupOptionsWrapAlign .group-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedGroupAlign = parseInt(el.dataset.group);
+    if (alignWords) buildSegmentsFromAlign(alignWords);
+  }
+
+  // ── Core align logic: map script words onto Whisper timings ──
+  function alignScriptToTimings(scriptText, whisperWordObjs) {
+    // Strip punctuation for comparison only
+    const clean = s => s.toLowerCase().replace(/[^a-zàâäéèêëîïôùûüçœæ0-9]/gi, '');
+    const scriptWords = scriptText.trim().split(/\s+/).filter(w => w.length > 0);
+    const wCount = whisperWordObjs.length;
+    const sCount = scriptWords.length;
+
+    // Build aligned array: for each whisper timing slot, assign the script word
+    // Strategy: if counts match, 1-to-1. If they differ, stretch/compress proportionally.
+    const result = [];
+    for (let i = 0; i < wCount; i++) {
+      // Map whisper index i → script index (proportional if counts differ)
+      const scriptIdx = Math.min(Math.round(i * sCount / wCount), sCount - 1);
+      result.push({
+        word: scriptWords[scriptIdx],
+        start: whisperWordObjs[i].start,
+        end: whisperWordObjs[i].end
+      });
+    }
+    // If script has more words than Whisper detected, pad remaining at the end
+    if (sCount > wCount) {
+      const lastEnd = whisperWordObjs[wCount - 1].end;
+      const extra = sCount - wCount;
+      const gap = 0.3; // 300ms per extra word
+      for (let j = 0; j < extra; j++) {
+        result.push({
+          word: scriptWords[wCount + j],
+          start: lastEnd + j * gap,
+          end: lastEnd + (j + 1) * gap
+        });
+      }
+    }
+    return result;
+  }
+
+  function buildSegmentsFromAlign(words) {
+    segments = [];
+    for (let i = 0; i < words.length; i += selectedGroupAlign) {
+      const chunk = words.slice(i, i + selectedGroupAlign);
+      const text = chunk.map(w => w.word).join(' ');
+      segments.push({ text, start: chunk[0].start, end: chunk[chunk.length - 1].end, duration: chunk[chunk.length - 1].end - chunk[0].start });
+    }
+    totalDuration = segments[segments.length - 1].end;
+    document.getElementById('subCount').textContent = segments.length;
+    renderList();
+    updatePreview(segments[0].text);
+    document.getElementById('modeBadge').textContent = selectedGroupAlign === 1 ? 'Mot par mot' : selectedGroupAlign + ' mots';
+    document.getElementById('whisperBadge').style.display = 'inline-block';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  async function transcribeAndAlign() {
+    const key = document.getElementById('apiKeyAlign').value.trim();
+    const scriptText = document.getElementById('alignScript').value.trim();
+    if (!key) { showErrorAlign('Entre ta clé API OpenAI.'); return false; }
+    if (!scriptText) { showErrorAlign('Colle ton script dans la zone de texte.'); return false; }
+    if (!selectedFileAlign) { showErrorAlign('Sélectionne ta vidéo ou audio.'); return false; }
+    if (selectedFileAlign.size > 25 * 1024 * 1024) { showErrorAlign('Fichier trop lourd (max 25 Mo).'); return false; }
+
+    const statusEl = document.getElementById('transcriptionStatusAlign');
+    const tsText = document.getElementById('tsTextAlign');
+    statusEl.style.display = 'flex';
+    document.getElementById('transcriptionErrorAlign').style.display = 'none';
+    document.getElementById('btnGenerate').disabled = true;
+
+    try {
+      tsText.innerHTML = 'Envoi à <strong>Whisper</strong> pour détecter les timings…';
+      const form = new FormData();
+      form.append('file', selectedFileAlign);
+      form.append('model', 'whisper-1');
+      form.append('language', 'fr');
+      form.append('response_format', 'verbose_json');
+      form.append('timestamp_granularities[]', 'word');
+
+      const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + key },
+        body: form
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error?.message || 'Erreur API ' + resp.status);
+      }
+
+      const data = await resp.json();
+      const whisperWordObjs = data.words || [];
+      if (whisperWordObjs.length === 0) throw new Error('Aucun mot détecté dans l\'audio.');
+
+      tsText.innerHTML = '✅ Timings détectés · Alignement avec ton script…';
+
+      alignWords = alignScriptToTimings(scriptText, whisperWordObjs);
+
+      const scriptWordCount = scriptText.trim().split(/\s+/).length;
+      tsText.innerHTML = `✅ <strong>Alignement terminé !</strong> ${scriptWordCount} mots du script · ${whisperWordObjs.length} timings Whisper`;
+
+      document.getElementById('groupOptionsWrapAlign').classList.add('visible');
+      buildSegmentsFromAlign(alignWords);
+      return true;
+
+    } catch (e) {
+      statusEl.style.display = 'none';
+      showErrorAlign('❌ ' + e.message);
+      document.getElementById('btnGenerate').disabled = false;
+      return false;
+    }
+  }
+
+  function showErrorAlign(msg) {
+    const el = document.getElementById('transcriptionErrorAlign');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // ── File handling ──
+  function onFileSelect(e) { setFile(e.target.files[0]); }
+  function onDragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
+  function onDragLeave() { document.getElementById('uploadZone').classList.remove('drag-over'); }
+  function onDrop(e) {
+    e.preventDefault();
+    document.getElementById('uploadZone').classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) setFile(f);
+  }
+
+  function setFile(f) {
+    if (!f) return;
+    selectedFile = f;
+    document.getElementById('fileName').textContent = f.name;
+    document.getElementById('fileSelected').style.display = 'flex';
+    document.getElementById('transcriptionError').style.display = 'none';
+    whisperWords = null;
+    document.getElementById('groupOptionsWrap').classList.remove('visible');
+  }
+
+  function removeFile() {
+    selectedFile = null;
+    document.getElementById('audioFile').value = '';
+    document.getElementById('fileSelected').style.display = 'none';
+    document.getElementById('groupOptionsWrap').classList.remove('visible');
+    whisperWords = null;
+  }
+
+  function toggleKey() {
+    const inp = document.getElementById('apiKey');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  // ── Group selector ──
+  function selectGroup(el) {
+    document.querySelectorAll('.group-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedGroup = parseInt(el.dataset.group);
+    if (whisperWords) buildSegmentsFromWords(whisperWords);
+  }
+
+  // ── Style / Mode selectors ──
   function selectStyle(el) {
     document.querySelectorAll('.style-option').forEach(o => o.classList.remove('active'));
     el.classList.add('active');
     selectedStyle = el.dataset.style;
+    const isStroke = selectedStyle === 'stroke' || selectedStyle === 'stroke-yellow';
+    document.getElementById('strokeThicknessWrap').style.display = isStroke ? 'block' : 'none';
     if (segments.length > 0) updatePreview(segments[0].text);
   }
 
@@ -169,11 +625,57 @@
     selectedMode = el.dataset.mode;
   }
 
+  function selectFont(el) {
+    document.querySelectorAll('.font-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedFont = el.dataset.font;
+    if (segments.length > 0) updatePreview(segments[0].text);
+  }
+
+  function onSizeChange(val) {
+    selectedSize = parseInt(val);
+    document.getElementById('sizeValue').textContent = selectedSize + 'px';
+    if (segments.length > 0) updatePreview(segments[0].text);
+  }
+
+  function onStrokeChange(val) {
+    selectedStroke = parseInt(val);
+    document.getElementById('strokeValue').textContent = selectedStroke + 'px';
+    if (segments.length > 0) updatePreview(segments[0].text);
+  }
+
   function applyStyle(sub) {
-    if (selectedStyle === 'white') { sub.style.color='#fff'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; sub.style.background=''; sub.style.padding=''; }
-    else if (selectedStyle === 'yellow') { sub.style.color='#FFE500'; sub.style.textShadow='-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000'; sub.style.background=''; sub.style.padding=''; }
-    else if (selectedStyle === 'tiktok') { sub.style.color='#fff'; sub.style.background='#000'; sub.style.padding='4px 14px'; sub.style.borderRadius='6px'; sub.style.textShadow=''; }
-    else if (selectedStyle === 'neon') { sub.style.color='#00ff88'; sub.style.textShadow='0 0 10px #00ff88,0 0 20px #00ff8855'; sub.style.background=''; sub.style.padding=''; }
+    sub.style.fontFamily = "'" + selectedFont + "', sans-serif";
+    sub.style.fontSize = selectedSize + 'px';
+    sub.style.webkitTextStroke = '';
+    sub.style.paintOrder = '';
+    sub.style.textShadow = '';
+    sub.style.background = '';
+    sub.style.padding = '';
+    sub.style.borderRadius = '';
+    if (selectedStyle === 'white') {
+      sub.style.color = '#fff';
+      sub.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000';
+    } else if (selectedStyle === 'stroke') {
+      sub.style.color = '#fff';
+      sub.style.webkitTextStroke = selectedStroke + 'px #000';
+      sub.style.paintOrder = 'stroke fill';
+    } else if (selectedStyle === 'stroke-yellow') {
+      sub.style.color = '#FFE500';
+      sub.style.webkitTextStroke = selectedStroke + 'px #000';
+      sub.style.paintOrder = 'stroke fill';
+    } else if (selectedStyle === 'yellow') {
+      sub.style.color = '#FFE500';
+      sub.style.textShadow = '-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000';
+    } else if (selectedStyle === 'tiktok') {
+      sub.style.color = '#fff';
+      sub.style.background = '#000';
+      sub.style.padding = '4px 14px';
+      sub.style.borderRadius = '6px';
+    } else if (selectedStyle === 'neon') {
+      sub.style.color = '#00ff88';
+      sub.style.textShadow = '0 0 10px #00ff88,0 0 20px #00ff8855';
+    }
   }
 
   function updatePreview(text) {
@@ -185,7 +687,106 @@
     sub.classList.add('zoom-anim');
   }
 
-  function generate() {
+  // ── Whisper API call ──
+  async function transcribeWithWhisper() {
+    const key = document.getElementById('apiKey').value.trim();
+    if (!key) { showError('Entre ta clé API OpenAI pour utiliser Whisper.'); return false; }
+    if (!selectedFile) { showError('Sélectionne un fichier audio ou vidéo.'); return false; }
+    if (selectedFile.size > 25 * 1024 * 1024) { showError('Fichier trop lourd (max 25 Mo). Compresse-le ou prends un extrait.'); return false; }
+
+    const statusEl = document.getElementById('transcriptionStatus');
+    const tsText = document.getElementById('tsText');
+    statusEl.style.display = 'flex';
+    document.getElementById('transcriptionError').style.display = 'none';
+    document.getElementById('btnGenerate').disabled = true;
+
+    try {
+      tsText.innerHTML = 'Envoi à <strong>Whisper</strong>… (peut prendre 10–30s)';
+      const form = new FormData();
+      form.append('file', selectedFile);
+      form.append('model', 'whisper-1');
+      form.append('language', 'fr');
+      form.append('response_format', 'verbose_json');
+      form.append('timestamp_granularities[]', 'word');
+
+      const resp = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + key },
+        body: form
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error?.message || 'Erreur API ' + resp.status);
+      }
+
+      const data = await resp.json();
+      tsText.innerHTML = '✅ <strong>Transcription terminée !</strong> ' + (data.words?.length || 0) + ' mots détectés.';
+
+      whisperWords = data.words || [];
+      if (whisperWords.length === 0) throw new Error('Aucun mot détecté. Vérifie que ta vidéo a bien du son.');
+
+      document.getElementById('groupOptionsWrap').classList.add('visible');
+      buildSegmentsFromWords(whisperWords);
+      return true;
+
+    } catch (e) {
+      statusEl.style.display = 'none';
+      showError('❌ ' + e.message);
+      document.getElementById('btnGenerate').disabled = false;
+      return false;
+    }
+  }
+
+  function buildSegmentsFromWords(words) {
+    // Group words by selectedGroup count
+    segments = [];
+    for (let i = 0; i < words.length; i += selectedGroup) {
+      const chunk = words.slice(i, i + selectedGroup);
+      const text = chunk.map(w => w.word.trim()).join(' ');
+      const start = chunk[0].start;
+      const end = chunk[chunk.length - 1].end;
+      segments.push({ text, start, end, duration: end - start });
+    }
+    totalDuration = segments[segments.length - 1].end;
+    document.getElementById('subCount').textContent = segments.length;
+    renderList();
+    updatePreview(segments[0].text);
+    document.getElementById('modeBadge').textContent = selectedGroup === 1 ? 'Mot par mot' : selectedGroup + ' mots';
+    document.getElementById('whisperBadge').style.display = 'inline-block';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('transcriptionError');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // ── Main generate ──
+  async function generate() {
+    if (currentTab === 'align') {
+      if (alignWords) { buildSegmentsFromAlign(alignWords); return; }
+      const ok = await transcribeAndAlign();
+      if (!ok) return;
+      document.getElementById('btnGenerate').disabled = false;
+      return;
+    }
+
+    if (currentTab === 'whisper') {
+      // If we already have words, just rebuild; otherwise transcribe
+      if (whisperWords) {
+        buildSegmentsFromWords(whisperWords);
+        return;
+      }
+      const ok = await transcribeWithWhisper();
+      if (!ok) return;
+      document.getElementById('btnGenerate').disabled = false;
+      return;
+    }
+
+    // Manual script mode (unchanged)
     const raw = document.getElementById('scriptInput').value.trim();
     totalDuration = parseFloat(document.getElementById('videoDuration').value) || 43;
     if (!raw) { alert('Veuillez coller votre script !'); return; }
@@ -194,33 +795,25 @@
     let tokens = [];
 
     if (selectedMode === 'mot') {
-      // Mode mot par mot
-      lines.forEach(line => {
-        const words = line.split(' ').filter(w => w.length > 0);
-        words.forEach(word => tokens.push(word));
-      });
+      lines.forEach(line => { const words = line.split(' ').filter(w => w.length > 0); words.forEach(word => tokens.push(word)); });
       document.getElementById('modeBadge').textContent = 'Mot par mot';
     } else {
-      // Mode phrase par phrase
       tokens = lines;
       document.getElementById('modeBadge').textContent = 'Phrase par phrase';
     }
 
     const timePerSeg = totalDuration / tokens.length;
-    segments = tokens.map((text, i) => ({
-      text,
-      start: i * timePerSeg,
-      end: (i + 1) * timePerSeg,
-      duration: timePerSeg
-    }));
+    segments = tokens.map((text, i) => ({ text, start: i * timePerSeg, end: (i + 1) * timePerSeg, duration: timePerSeg }));
 
     document.getElementById('subCount').textContent = segments.length;
+    document.getElementById('whisperBadge').style.display = 'none';
     renderList();
     updatePreview(segments[0].text);
     document.getElementById('results').style.display = 'block';
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
   }
 
+  // ── Player ──
   function togglePlay() { isPlaying ? stopPlay() : startPlay(); }
 
   function startPlay() {
